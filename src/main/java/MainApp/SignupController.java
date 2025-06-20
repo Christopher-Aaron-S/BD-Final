@@ -13,7 +13,7 @@ import java.net.URL;
 import java.sql.*;
 import java.util.ResourceBundle;
 
-public class SignupController implements Initializable {
+public class    SignupController implements Initializable {
 
     @FXML private TextField fullNameField;
     @FXML private TextField emailField;

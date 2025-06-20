@@ -1,0 +1,56 @@
+/* Import font (Harus di-load manual di Java) */
+/* @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap'); */
+
+.root {
+    /* Mirip dengan 'body' di web */
+    -fx-background-color: linear-gradient(to right, #e2e2e2, #c9d6ff);
+}
+
+#container {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 30;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.35), 15, 0, 0, 5);
+}
+
+.form-container {
+    -fx-spacing: 8; /* Jarak antar elemen di VBox */
+    -fx-padding: 0 40 0 40;
+    -fx-background-color: #ffffff;
+}
+
+.text-field {
+    -fx-background-color: #eee;
+    -fx-background-radius: 8;
+    -fx-font-size: 13px;
+    -fx-padding: 10 15 10 15;
+}
+
+.button {
+    -fx-background-color: #512da8;
+    -fx-text-fill: #fff;
+    -fx-font-size: 12px;
+    -fx-padding: 10 45 10 45;
+    -fx-background-radius: 8;
+    -fx-font-weight: bold;
+    -fx-text-transform: uppercase;
+}
+
+.button:hover {
+    -fx-background-color: #4527a0; /* Efek hover sederhana */
+}
+
+.button.hidden {
+    -fx-background-color: transparent;
+    -fx-border-color: #fff;
+    -fx-border-radius: 8;
+}
+
+/* Untuk toggle panel */
+.toggle {
+    -fx-background-color: linear-gradient(to right, #5c6bc0, #512da8);
+    -fx-background-radius: 150 0 0 100; /* Ini lebih sulit, mungkin perlu disesuaikan */
+}
+
+.h1 { -fx-font-size: 24px; -fx-font-weight: bold; }
+.h1-white { -fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white; }
+.p-white { -fx-font-size: 14px; -fx-text-fill: white; -fx-text-alignment: center; }

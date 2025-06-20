@@ -6,6 +6,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 
+import javafx.animation.TranslateTransition;
+import javafx.fxml.FXML;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.StackPane;
+import javafx.util.Duration;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -25,7 +31,15 @@ public class LoginController {
     @FXML private HBox successBox;
     @FXML private Label successMessageLabel;
 
+    @FXML private StackPane container;
+    @FXML private VBox signInPanel;
+    @FXML private VBox signUpPanel;
+    @FXML private VBox togglePanel;
+
+
     private boolean isPasswordVisible = false;
+
+    private boolean isSignUp = false;
 
     // ================================
     // INITIALIZATION
@@ -41,6 +55,57 @@ public class LoginController {
             showSuccess(success);
             HelloApplication.clearSuccessMessage();
         }
+
+        // Sembunyikan panel signup di awal
+        signUpPanel.setVisible(false);
+        signUpPanel.setOpacity(0);
+    }
+
+
+    // ================================
+    // SIGN UP PANEL TOGGLE
+    // ================================
+    @FXML
+    private void showSignUpPanel() {
+        // Durasikan animasi
+        Duration duration = Duration.millis(600);
+
+        // Buat transisi untuk menggeser panel
+        TranslateTransition ttSignIn = new TranslateTransition(duration, signInPanel);
+        TranslateTransition ttSignUp = new TranslateTransition(duration, signUpPanel);
+        TranslateTransition ttToggle = new TranslateTransition(duration, togglePanel);
+
+        if (!isSignUp) {
+            // Geser sign-in panel ke kanan
+            ttSignIn.setToX(384);
+            // Tampilkan sign-up panel lalu geser ke posisi tengah
+            signUpPanel.setVisible(true);
+            ttSignUp.setFromX(-384);
+            ttSignUp.setToX(0);
+            // Geser toggle panel ke kiri
+            ttToggle.setToX(-384);
+
+            isSignUp = true;
+        } else {
+            // Kembalikan ke posisi semula
+            ttSignIn.setToX(0);
+            ttSignUp.setToX(-384);
+            ttToggle.setToX(0);
+
+            isSignUp = false;
+        }
+
+        // Jalankan semua animasi secara bersamaan
+        ttSignIn.play();
+        ttSignUp.play();
+        ttToggle.play();
+
+        // Atur opacity setelah animasi selesai
+        ttSignUp.setOnFinished(event -> {
+            if (!isSignUp) {
+                signUpPanel.setVisible(false);
+            }
+        });
     }
 
     // ================================
@@ -165,4 +230,7 @@ public class LoginController {
         successBox.setVisible(false);
         successBox.setManaged(false);
     }
+
+
+
 }
