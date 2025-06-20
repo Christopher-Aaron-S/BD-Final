@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<Pane prefHeight="600.0" prefWidth="600.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MainApp.SignupController">
+    <children>
+
+        <!-- Side pane -->
+        <StackPane layoutX="400.0" prefHeight="600.0" prefWidth="200.0" style="-fx-background-color: #E3E7FD;" />
+
+        <!-- Title -->
+        <Label layoutX="114.0" layoutY="30.0" text="STUDENT CLUB" textAlignment="CENTER">
+            <font>
+                <Font name="Times New Roman Bold" size="20.0" />
+            </font>
+        </Label>
+
+        <!-- Error Message Box -->
+        <HBox fx:id="errorBox" alignment="CENTER_LEFT" layoutX="28.0" layoutY="80.0" managed="false" prefWidth="350.0" spacing="10" style="-fx-background-color: #f8d7da; -fx-border-color: #f5c6cb; -fx-border-radius: 5; -fx-background-radius: 5; -fx-padding: 10;" visible="false">
+            <children>
+                <Button onAction="#hideError" style="-fx-background-color: transparent; -fx-text-fill: #721c24; -fx-font-size: 14px; -fx-alignment: CENTER;" text="✖" />
+                <Label fx:id="errorMessageLabel" style="-fx-font-size: 13px;" text="Invalid credentials." textFill="#721c24" wrapText="true" />
+            </children>
+        </HBox>
+
+        <!-- Full Name -->
+        <VBox layoutX="28.0" layoutY="140.0" prefHeight="64.0" prefWidth="340.0">
+            <children>
+                <Label text="Full Name" />
+                <TextField fx:id="fullNameField" promptText="Enter your full name" />
+            </children>
+        </VBox>
+
+        <!-- NRP -->
+        <VBox layoutX="28.0" layoutY="200.0" prefHeight="64.0" prefWidth="340.0">
+            <children>
+                <Label text="NRP" />
+                <TextField fx:id="nrpField" promptText="Enter your NRP" />
+            </children>
+        </VBox>
+
+        <!-- Email -->
+        <VBox layoutX="28.0" layoutY="260.0" prefHeight="64.0" prefWidth="340.0">
+            <children>
+                <Label text="Email" />
+                <TextField fx:id="emailField" promptText="Enter your email" />
+            </children>
+        </VBox>
+
+        <!-- Password -->
+        <VBox layoutX="28.0" layoutY="320.0" prefHeight="64.0" prefWidth="340.0">
+            <children>
+                <Label text="Password" />
+                <StackPane>
+                    <children>
+                        <PasswordField fx:id="passwordField" prefWidth="320.0" promptText="Enter your password" />
+                        <TextField fx:id="visiblePasswordField" managed="false" visible="false" prefWidth="320.0" promptText="Enter your password" />
+                        <Button fx:id="togglePasswordButton" onAction="#togglePasswordVisibility" style="-fx-background-color: transparent;" text="👁" translateX="-5" StackPane.alignment="CENTER_RIGHT" />
+                    </children>
+                </StackPane>
+            </children>
+        </VBox>
+
+        <!-- Program Studi -->
+        <VBox layoutX="28.0" layoutY="380.0" prefHeight="64.0" prefWidth="340.0">
+            <children>
+                <Label text="Program Studi" />
+                <ComboBox fx:id="programComboBox" prefHeight="26.0" prefWidth="350.0" promptText="Select Program" />
+            </children>
+        </VBox>
+
+        <!-- Sign up Button -->
+        <Button layoutX="63.0" layoutY="450.0" onAction="#handleSignup" prefHeight="30.0" prefWidth="260.0" style="-fx-background-color: #1A237E; -fx-text-fill: white; -fx-font-weight: bold;" text="Sign Up" />
+
+        <!-- Already have an account -->
+        <Label layoutX="64.0" layoutY="490.0" text="Already have an account?" />
+        <Hyperlink layoutX="208.0" layoutY="487.0" onAction="#goToLogin" text="Log in" />
+
+    </children>
+</Pane>
