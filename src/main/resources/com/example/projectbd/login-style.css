@@ -1,56 +1,112 @@
-/* Import font (Harus di-load manual di Java) */
-/* @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap'); */
+/* --- GLOBAL & FONT --- */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
 
 .root {
-    /* Mirip dengan 'body' di web */
+    -fx-font-family: 'Montserrat', sans-serif;
     -fx-background-color: linear-gradient(to right, #e2e2e2, #c9d6ff);
 }
 
-#container {
-    -fx-background-color: #ffffff;
-    -fx-background-radius: 30;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.35), 15, 0, 0, 5);
+/* --- CONTAINER UTAMA --- */
+.container {
+    -fx-background-color: #fff;
+    -fx-background-radius: 30px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.35), 15, 0, 5, 5);
 }
 
+/* --- FORM & INPUT --- */
 .form-container {
-    -fx-spacing: 8; /* Jarak antar elemen di VBox */
-    -fx-padding: 0 40 0 40;
-    -fx-background-color: #ffffff;
+    -fx-padding: 0 40px;
+    -fx-alignment: center;
+    /* INI KUNCI ANIMASI GESER YANG SMOOTH */
+    -fx-transition: -fx-transform 0.6s ease-in-out, -fx-opacity 0.6s ease-in-out;
 }
+
+.sign-in-panel { -fx-opacity: 1; }
+.sign-up-panel { -fx-opacity: 0; }
 
 .text-field {
     -fx-background-color: #eee;
-    -fx-background-radius: 8;
+    -fx-background-radius: 8px;
+    -fx-border-width: 0;
     -fx-font-size: 13px;
-    -fx-padding: 10 15 10 15;
+    -fx-padding: 10px 15px;
 }
 
+/* --- BUTTON & LINK --- */
 .button {
     -fx-background-color: #512da8;
     -fx-text-fill: #fff;
     -fx-font-size: 12px;
-    -fx-padding: 10 45 10 45;
-    -fx-background-radius: 8;
+    -fx-padding: 10px 45px;
+    -fx-background-radius: 8px;
     -fx-font-weight: bold;
     -fx-text-transform: uppercase;
+    -fx-cursor: hand;
 }
 
-.button:hover {
-    -fx-background-color: #4527a0; /* Efek hover sederhana */
-}
-
+.button:hover { -fx-background-color: #4527a0; }
 .button.hidden {
     -fx-background-color: transparent;
     -fx-border-color: #fff;
-    -fx-border-radius: 8;
+    -fx-border-width: 1px;
 }
 
-/* Untuk toggle panel */
-.toggle {
+.link {
+    -fx-font-size: 13px;
+    -fx-text-fill: #333;
+    -fx-cursor: hand;
+}
+
+/* --- TOGGLE OVERLAY PANEL --- */
+.toggle-container {
     -fx-background-color: linear-gradient(to right, #5c6bc0, #512da8);
-    -fx-background-radius: 150 0 0 100; /* Ini lebih sulit, mungkin perlu disesuaikan */
+    /* INI KUNCI BENTUK SUDUT YANG BARU & LEBIH BAIK */
+    /* Format: top-left, top-right, bottom-right, bottom-left */
+    -fx-background-radius: 150 0 0 150;
+    -fx-transition: -fx-transform 0.6s ease-in-out, -fx-background-radius 0.1s ease-in;
 }
 
-.h1 { -fx-font-size: 24px; -fx-font-weight: bold; }
-.h1-white { -fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white; }
+.toggle-panel {
+    -fx-alignment: center;
+    -fx-padding: 0 30px;
+    -fx-transition: -fx-opacity 0.6s ease-in-out;
+}
+
+.toggle-left { -fx-opacity: 0; }
+.toggle-right { -fx-opacity: 1; }
+
+/* --- TEXT STYLES --- */
+.h1 { -fx-font-size: 28px; -fx-font-weight: bold; }
+.h1-white { -fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: white; }
 .p-white { -fx-font-size: 14px; -fx-text-fill: white; -fx-text-alignment: center; }
+
+/* ======================================================= */
+/* --- STATE SAAT AKTIF ('Sign Up') --- */
+/* ======================================================= */
+
+.container.active .sign-in-panel,
+.container.active .sign-up-panel {
+    -fx-translate-x: 384px; /* Geser ke kanan sejauh lebar satu panel */
+}
+
+.container.active .sign-in-panel { -fx-opacity: 0; }
+.container.active .sign-up-panel { -fx-opacity: 1; }
+
+.container.active .toggle-container {
+    -fx-translate-x: -384px; /* Geser ke kiri sejauh lebar satu panel */
+    /* Mengubah bentuk sudut saat panel aktif */
+    -fx-background-radius: 0 150 150 0;
+}
+
+.container.active .toggle-left { -fx-opacity: 1; }
+.container.active .toggle-right { -fx-opacity: 0; }
+
+/* --- MESSAGE BOX --- */
+.message-box {
+    -fx-padding: 10px 20px;
+    -fx-background-radius: 8px;
+    -fx-text-fill: white;
+    -fx-margin: 10 0 0 0;
+}
+.success-box { -fx-background-color: #4CAF50; }
+.error-box { -fx-background-color: #F44336; }

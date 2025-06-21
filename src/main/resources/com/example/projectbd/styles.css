@@ -1,0 +1,68 @@
+.root {
+    -fx-font-family: 'System';
+}
+
+/* Sidebar Style */
+.sidebar {
+    -fx-background-color: #ffffff;
+    -fx-padding: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 20, 0, 5, 0);
+}
+
+.sidebar-title {
+    -fx-text-fill: #9b59b6; /* Warna ungu untuk judul */
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-padding: 10 0 20 0;
+}
+
+.sidebar-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #333333; /* Teks gelap */
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-pref-width: 200;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 12 15;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+}
+
+.sidebar-button:hover {
+    -fx-background-color: #f0eaf6; /* Hover ungu sangat muda */
+    -fx-text-fill: #8e44ad;
+}
+
+.sidebar-button:focused {
+    -fx-background-color: #9b59b6; /* Warna ungu saat tombol aktif */
+    -fx-text-fill: white;
+}
+
+/* Content Area Style */
+.content-area {
+    -fx-background-color: #f4f5f7; /* Warna latar utama yang sangat terang (off-white) */
+}
+
+/* TableView Style */
+.table-view {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 8;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header, .table-view .filler {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent #e0e0e0 transparent;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.table-view .table-cell {
+    -fx-border-color: transparent;
+    -fx-padding: 10px;
+}

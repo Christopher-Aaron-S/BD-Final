@@ -3,14 +3,11 @@ package MainApp;
 import DBConnector.Connector;
 import Entity.Mahasiswa;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
-
-import javafx.animation.TranslateTransition;
-import javafx.fxml.FXML;
-import javafx.scene.layout.VBox;
 import javafx.scene.layout.StackPane;
-import javafx.util.Duration;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -22,105 +19,45 @@ public class LoginController {
 
     @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;
-    @FXML private TextField visiblePasswordField;
-    @FXML private Button togglePasswordButton;
-
     @FXML private HBox errorBox;
     @FXML private Label errorMessageLabel;
-
     @FXML private HBox successBox;
     @FXML private Label successMessageLabel;
 
     @FXML private StackPane container;
-    @FXML private VBox signInPanel;
-    @FXML private VBox signUpPanel;
-    @FXML private VBox togglePanel;
 
+    @FXML
+    private void toggleView() {
+        if (container.getStyleClass().contains("active")) {
+            container.getStyleClass().remove("active");
+        } else {
+            container.getStyleClass().add("active");
+        }
+    }
 
-    private boolean isPasswordVisible = false;
-
-    private boolean isSignUp = false;
-
-    // ================================
-    // INITIALIZATION
-    // ================================
     @FXML
     public void initialize() {
         hideError();
         hideSuccess();
 
-        // Tampilkan success message jika ada
+        // Tampilkan pesan sukses jika ada dari halaman lain
         String success = HelloApplication.getSuccessMessage();
-        if (success != null) {
+        if (success != null && !success.isEmpty()) {
             showSuccess(success);
             HelloApplication.clearSuccessMessage();
         }
-
-        // Sembunyikan panel signup di awal
-        signUpPanel.setVisible(false);
-        signUpPanel.setOpacity(0);
     }
 
-
-    // ================================
-    // SIGN UP PANEL TOGGLE
-    // ================================
     @FXML
-    private void showSignUpPanel() {
-        // Durasikan animasi
-        Duration duration = Duration.millis(600);
-
-        // Buat transisi untuk menggeser panel
-        TranslateTransition ttSignIn = new TranslateTransition(duration, signInPanel);
-        TranslateTransition ttSignUp = new TranslateTransition(duration, signUpPanel);
-        TranslateTransition ttToggle = new TranslateTransition(duration, togglePanel);
-
-        if (!isSignUp) {
-            // Geser sign-in panel ke kanan
-            ttSignIn.setToX(384);
-            // Tampilkan sign-up panel lalu geser ke posisi tengah
-            signUpPanel.setVisible(true);
-            ttSignUp.setFromX(-384);
-            ttSignUp.setToX(0);
-            // Geser toggle panel ke kiri
-            ttToggle.setToX(-384);
-
-            isSignUp = true;
-        } else {
-            // Kembalikan ke posisi semula
-            ttSignIn.setToX(0);
-            ttSignUp.setToX(-384);
-            ttToggle.setToX(0);
-
-            isSignUp = false;
-        }
-
-        // Jalankan semua animasi secara bersamaan
-        ttSignIn.play();
-        ttSignUp.play();
-        ttToggle.play();
-
-        // Atur opacity setelah animasi selesai
-        ttSignUp.setOnFinished(event -> {
-            if (!isSignUp) {
-                signUpPanel.setVisible(false);
-            }
-        });
-    }
-
-    // ================================
-    // LOGIN HANDLER
-    // ================================
-    @FXML
-    private void handleLogin() {
+    private void handleLogin() throws IOException {
         hideError();
         hideSuccess();
 
-        String user = usernameField.getText().toLowerCase();
-        String pass = isPasswordVisible ? visiblePasswordField.getText() : passwordField.getText();
+        String user = usernameField.getText().toLowerCase().trim();
+        String pass = passwordField.getText();
 
         if (user.isEmpty() || pass.isEmpty()) {
-            showError("Username and password cannot be empty.");
+            showError("NRP and password cannot be empty.");
             return;
         }
 
@@ -138,12 +75,10 @@ public class LoginController {
 
                 Mahasiswa loggedInUser = new Mahasiswa(user, nama, email, idProgram);
                 HelloApplication.setLoggedInUser(loggedInUser);
-
-                HelloApplication.showDashboard();
+                HelloApplication.showMainView();
             } else {
-                showError("Invalid username or password.");
+                showError("Invalid NRP or password.");
             }
-
         } catch (SQLException e) {
             showError("Database error occurred.");
             e.printStackTrace();
@@ -153,45 +88,14 @@ public class LoginController {
         }
     }
 
-    // ================================
-    // TOGGLE PASSWORD VISIBILITY
-    // ================================
+    // Arahkan ke SignupController untuk handle signup
     @FXML
-    private void togglePasswordVisibility() {
-        isPasswordVisible = !isPasswordVisible;
-
-        if (isPasswordVisible) {
-            visiblePasswordField.setText(passwordField.getText());
-            visiblePasswordField.setVisible(true);
-            visiblePasswordField.setManaged(true);
-
-            passwordField.setVisible(false);
-            passwordField.setManaged(false);
-
-            togglePasswordButton.setText("🙈");
-        } else {
-            passwordField.setText(visiblePasswordField.getText());
-            passwordField.setVisible(true);
-            passwordField.setManaged(true);
-
-            visiblePasswordField.setVisible(false);
-            visiblePasswordField.setManaged(false);
-
-            togglePasswordButton.setText("👁");
-        }
-    }
-
-    // ================================
-    // NAVIGATION
-    // ================================
-    @FXML
-    private void goToSignup() {
-        try {
-            HelloApplication.showSignup();
-        } catch (IOException e) {
-            showError("Unable to open sign-up page.");
-            e.printStackTrace();
-        }
+    private void handleSignup() {
+        // Logika signup ada di SignupController,
+        // namun FXML ini bisa memanggil method di LoginController.
+        // Sebaiknya logika signup dipisah sepenuhnya.
+        // Untuk sementara, kita bisa panggil method dari SignupController jika digabungkan.
+        System.out.println("Sign Up button clicked. Logic should be in SignupController.");
     }
 
     @FXML
@@ -204,33 +108,35 @@ public class LoginController {
         }
     }
 
-    // ================================
-    // MESSAGE HANDLING
-    // ================================
     private void showError(String message) {
-        errorMessageLabel.setText(message);
-        errorBox.setVisible(true);
-        errorBox.setManaged(true);
+        if (errorMessageLabel != null) {
+            errorMessageLabel.setText(message);
+            errorBox.setVisible(true);
+            errorBox.setManaged(true);
+        }
     }
 
     @FXML
     private void hideError() {
-        errorBox.setVisible(false);
-        errorBox.setManaged(false);
+        if (errorBox != null) {
+            errorBox.setVisible(false);
+            errorBox.setManaged(false);
+        }
     }
 
     public void showSuccess(String message) {
-        successMessageLabel.setText(message);
-        successBox.setVisible(true);
-        successBox.setManaged(true);
+        if (successMessageLabel != null) {
+            successMessageLabel.setText(message);
+            successBox.setVisible(true);
+            successBox.setManaged(true);
+        }
     }
 
     @FXML
     private void hideSuccess() {
-        successBox.setVisible(false);
-        successBox.setManaged(false);
+        if (successBox != null) {
+            successBox.setVisible(false);
+            successBox.setManaged(false);
+        }
     }
-
-
-
 }

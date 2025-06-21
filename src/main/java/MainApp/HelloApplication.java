@@ -64,17 +64,16 @@ public class HelloApplication extends Application {
         currentStage.setTitle("Reset Your Password");
     }
 
-    public static void showDashboard() throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/com/example/projectbd/dashboard.fxml"));
+    public static void showMainView() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/com/example/projectbd/MainView.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
 
-        // Ambil controller dan set data user
-        DashboardController controller = fxmlLoader.getController();
-        Mahasiswa user = getLoggedInUser();
-        controller.setUser(user);
+        // Kirim data user yang login ke MainViewController
+        MainViewController controller = fxmlLoader.getController();
+        controller.setUser(getLoggedInUser());
 
         currentStage.setScene(scene);
-        currentStage.setTitle("Dashboard");
+        currentStage.setTitle("Student Club Portal");
     }
 
     // -------------------------------

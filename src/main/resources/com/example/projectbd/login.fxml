@@ -1,35 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
 
-<StackPane fx:id="container" prefHeight="480.0" prefWidth="768.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MainApp.LoginController">
-    <stylesheets>
-        <URL value="@login-style.css" />
-    </stylesheets>
+<StackPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="MainApp.LoginController"
+           prefHeight="480.0" prefWidth="768.0" stylesheets="@login-style.css">
 
-    <VBox fx:id="signUpPanel" alignment="CENTER" maxWidth="384.0" styleClass="form-container">
-        <Label text="Create Account" styleClass="h1"/>
-        <TextField fx:id="fullNameField" promptText="Name" />
-        <TextField fx:id="emailField" promptText="Email" />
-        <PasswordField fx:id="passwordField" promptText="Password" />
-        <Button text="Sign Up" onAction="#handleSignup"/>
-    </VBox>
+    <StackPane fx:id="container" styleClass="container" maxWidth="768" maxHeight="480">
 
-    <VBox fx:id="signInPanel" alignment="CENTER" maxWidth="384.0" styleClass="form-container">
-        <Label text="Sign In" styleClass="h1"/>
-        <TextField fx:id="usernameField" promptText="Email or NRP" />
-        <PasswordField fx:id="passwordFieldLogin" promptText="Password" />
-        <Hyperlink text="Forget Your Password?" onAction="#goToForgotPassword"/>
-        <Button text="Sign In" onAction="#handleLogin"/>
-    </VBox>
-
-    <AnchorPane fx:id="toggleContainer" pickOnBounds="false">
-        <VBox fx:id="togglePanel" alignment="CENTER" prefHeight="480.0" prefWidth="384.0" styleClass="toggle">
-            <Label text="Hello, Friend!" styleClass="h1-white"/>
-            <Label text="Register with your personal details to use all of site features" styleClass="p-white" wrapText="true"/>
-            <Button text="Sign Up" styleClass="hidden" onAction="#showSignUpPanel"/>
+        <VBox fx:id="signUpPanel" styleClass="form-container, sign-up-panel" alignment="CENTER" spacing="10"
+              maxWidth="384">
+            <StackPane.alignment>CENTER_LEFT</StackPane.alignment>
+            <Label text="Create Account" styleClass="h1"/>
+            <TextField fx:id="fullNameField" promptText="Full Name" styleClass="text-field" prefWidth="300"/>
+            <TextField fx:id="emailField" promptText="Email" styleClass="text-field" prefWidth="300"/>
+            <PasswordField fx:id="signupPasswordField" promptText="Password" styleClass="text-field" prefWidth="300"/>
+            <Button text="Sign Up" styleClass="button" onAction="#handleSignup"/>
         </VBox>
-    </AnchorPane>
+
+        <VBox fx:id="signInPanel" styleClass="form-container, sign-in-panel" alignment="CENTER" spacing="10"
+              maxWidth="384">
+            <StackPane.alignment>CENTER_LEFT</StackPane.alignment>
+            <Label text="Sign In" styleClass="h1"/>
+            <TextField fx:id="usernameField" promptText="NRP" styleClass="text-field" prefWidth="300"/>
+            <PasswordField fx:id="passwordField" promptText="Password" styleClass="text-field" prefWidth="300"/>
+            <Label text="Forget Your Password?" styleClass="link" onMouseClicked="#goToForgotPassword"/>
+            <Button text="Sign In" styleClass="button" onAction="#handleLogin"/>
+        </VBox>
+
+        <VBox fx:id="toggleContainer" styleClass="toggle-container" alignment="CENTER"
+              maxWidth="384">
+            <StackPane.alignment>CENTER_RIGHT</StackPane.alignment>
+            <VBox fx:id="toggleLeft" styleClass="toggle-panel, toggle-left" alignment="CENTER" spacing="15">
+                <Label text="Welcome Back!" styleClass="h1-white"/>
+                <Button text="Sign In" styleClass="button, hidden" onAction="#toggleView"/>
+            </VBox>
+            <VBox fx:id="toggleRight" styleClass="toggle-panel, toggle-right" alignment="CENTER" spacing="15">
+                <Label text="Hello, Friend!" styleClass="h1-white"/>
+                <Text text="Register with your personal details to use all of site features"
+                      styleClass="p-white" textAlignment="CENTER" wrappingWidth="250"/>
+                <Button text="Sign Up" styleClass="button, hidden" onAction="#toggleView"/>
+            </VBox>
+        </VBox>
+    </StackPane>
+
+    <VBox alignment="TOP_CENTER" prefHeight="480.0" prefWidth="768.0" pickOnBounds="false">
+        <HBox fx:id="successBox" alignment="CENTER" styleClass="message-box, success-box" managed="false" visible="false">
+            <Label fx:id="successMessageLabel" />
+        </HBox>
+        <HBox fx:id="errorBox" alignment="CENTER" styleClass="message-box, error-box" managed="false" visible="false">
+            <Label fx:id="errorMessageLabel" />
+        </HBox>
+    </VBox>
 </StackPane>
