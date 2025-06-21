@@ -20,40 +20,27 @@ import java.util.ResourceBundle;
 
 public class ClubsController implements Initializable {
 
-    @FXML
-    private TableView<Club> clubTableView;
-    @FXML
-    private TableColumn<Club, String> namaClubColumn;
-    @FXML
-    private TableColumn<Club, Kategori> kategoriColumn;
-    @FXML
-    private TableColumn<Club, Integer> tahunBerdiriColumn;
-    @FXML
-    private TableColumn<Club, String> deskripsiColumn;
+    @FXML private TableView<Club> clubTableView;
+    @FXML private TableColumn<Club, String> namaClubColumn;
+    @FXML private TableColumn<Club, Kategori> kategoriColumn;
+    @FXML private TableColumn<Club, Integer> tahunBerdiriColumn;
+    @FXML private TableColumn<Club, String> deskripsiColumn;
 
     private final ObservableList<Club> clubList = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         namaClubColumn.setCellValueFactory(new PropertyValueFactory<>("namaClub"));
-
-        // Untuk menampilkan nama kategori dari objek Kategori
         kategoriColumn.setCellValueFactory(new PropertyValueFactory<>("kategori"));
-        kategoriColumn.setCellFactory(column -> new javafx.scene.control.TableCell<Club, Kategori>() {
+        kategoriColumn.setCellFactory(column -> new javafx.scene.control.TableCell<>() {
             @Override
             protected void updateItem(Kategori item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(item.getNamaKategori());
-                }
+                setText(empty || item == null ? null : item.getNamaKategori());
             }
         });
-
         tahunBerdiriColumn.setCellValueFactory(new PropertyValueFactory<>("tahunBerdiri"));
         deskripsiColumn.setCellValueFactory(new PropertyValueFactory<>("deskripsi"));
-
         loadClubsFromDB();
     }
 
@@ -81,7 +68,6 @@ public class ClubsController implements Initializable {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            // Handle error, maybe show an alert
         }
     }
 }

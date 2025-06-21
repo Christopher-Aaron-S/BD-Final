@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="720.0" prefWidth="1060.0" spacing="20.0" style="-fx-background-color: #f4f5f7; -fx-padding: 30;">
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" prefHeight="720.0" prefWidth="1060.0" spacing="20.0" style="-fx-background-color: #f4f5f7; -fx-padding: 30;" fx:controller="MainApp.DashboardController">
     <children>
         <VBox style="-fx-background-color: white; -fx-padding: 25; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 2);">
             <children>

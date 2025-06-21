@@ -7,19 +7,19 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="720.0" prefWidth="1060.0" spacing="10.0" style="-fx-padding: 30; -fx-background-color: #f4f5f7;">
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MainApp.ClubsController" style="-fx-background-color: #f4f5f7; -fx-padding: 30;" spacing="20.0">
     <children>
-        <Label text="All Available Clubs">
+        <Label text="All Clubs">
             <font>
-                <Font name="System Bold" size="22.0" />
+                <Font name="System Bold" size="24.0" />
             </font>
         </Label>
         <TableView fx:id="clubTableView" VBox.vgrow="ALWAYS">
             <columns>
                 <TableColumn fx:id="namaClubColumn" prefWidth="200.0" text="Club Name" />
                 <TableColumn fx:id="kategoriColumn" prefWidth="150.0" text="Category" />
-                <TableColumn fx:id="tahunBerdiriColumn" prefWidth="100.0" text="Established" />
-                <TableColumn fx:id="deskripsiColumn" prefWidth="550.0" text="Description" />
+                <TableColumn fx:id="tahunBerdiriColumn" prefWidth="120.0" text="Established" />
+                <TableColumn fx:id="deskripsiColumn" prefWidth="450.0" text="Description" />
             </columns>
         </TableView>
     </children>

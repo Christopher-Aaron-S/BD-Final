@@ -7,7 +7,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -24,32 +23,14 @@ public class LoginController {
     @FXML private HBox successBox;
     @FXML private Label successMessageLabel;
 
-    @FXML private StackPane container;
-
-    @FXML
-    private void toggleView() {
-        if (container.getStyleClass().contains("active")) {
-            container.getStyleClass().remove("active");
-        } else {
-            container.getStyleClass().add("active");
-        }
-    }
-
     @FXML
     public void initialize() {
         hideError();
         hideSuccess();
-
-        // Tampilkan pesan sukses jika ada dari halaman lain
-        String success = HelloApplication.getSuccessMessage();
-        if (success != null && !success.isEmpty()) {
-            showSuccess(success);
-            HelloApplication.clearSuccessMessage();
-        }
     }
 
     @FXML
-    private void handleLogin() throws IOException {
+    private void handleLogin() {
         hideError();
         hideSuccess();
 
@@ -88,14 +69,9 @@ public class LoginController {
         }
     }
 
-    // Arahkan ke SignupController untuk handle signup
     @FXML
-    private void handleSignup() {
-        // Logika signup ada di SignupController,
-        // namun FXML ini bisa memanggil method di LoginController.
-        // Sebaiknya logika signup dipisah sepenuhnya.
-        // Untuk sementara, kita bisa panggil method dari SignupController jika digabungkan.
-        System.out.println("Sign Up button clicked. Logic should be in SignupController.");
+    private void goToSignup() throws IOException {
+        HelloApplication.showSignup();
     }
 
     @FXML
@@ -109,34 +85,26 @@ public class LoginController {
     }
 
     private void showError(String message) {
-        if (errorMessageLabel != null) {
-            errorMessageLabel.setText(message);
-            errorBox.setVisible(true);
-            errorBox.setManaged(true);
-        }
+        errorMessageLabel.setText(message);
+        errorBox.setVisible(true);
+        errorBox.setManaged(true);
     }
 
     @FXML
     private void hideError() {
-        if (errorBox != null) {
-            errorBox.setVisible(false);
-            errorBox.setManaged(false);
-        }
+        errorBox.setVisible(false);
+        errorBox.setManaged(false);
     }
 
     public void showSuccess(String message) {
-        if (successMessageLabel != null) {
-            successMessageLabel.setText(message);
-            successBox.setVisible(true);
-            successBox.setManaged(true);
-        }
+        successMessageLabel.setText(message);
+        successBox.setVisible(true);
+        successBox.setManaged(true);
     }
 
     @FXML
     private void hideSuccess() {
-        if (successBox != null) {
-            successBox.setVisible(false);
-            successBox.setManaged(false);
-        }
+        successBox.setVisible(false);
+        successBox.setManaged(false);
     }
 }

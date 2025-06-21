@@ -2,7 +2,6 @@
     -fx-font-family: 'System';
 }
 
-/* Sidebar Style */
 .sidebar {
     -fx-background-color: #ffffff;
     -fx-padding: 10;
@@ -10,15 +9,15 @@
 }
 
 .sidebar-title {
-    -fx-text-fill: #9b59b6; /* Warna ungu untuk judul */
     -fx-font-size: 20px;
     -fx-font-weight: bold;
     -fx-padding: 10 0 20 0;
+    -fx-text-fill: #9b59b6;
 }
 
 .sidebar-button {
     -fx-background-color: transparent;
-    -fx-text-fill: #333333; /* Teks gelap */
+    -fx-text-fill: #333333;
     -fx-font-size: 14px;
     -fx-font-weight: 500;
     -fx-pref-width: 200;
@@ -29,21 +28,19 @@
 }
 
 .sidebar-button:hover {
-    -fx-background-color: #f0eaf6; /* Hover ungu sangat muda */
+    -fx-background-color: #f0eaf6;
     -fx-text-fill: #8e44ad;
 }
 
 .sidebar-button:focused {
-    -fx-background-color: #9b59b6; /* Warna ungu saat tombol aktif */
+    -fx-background-color: #9b59b6;
     -fx-text-fill: white;
 }
 
-/* Content Area Style */
 .content-area {
-    -fx-background-color: #f4f5f7; /* Warna latar utama yang sangat terang (off-white) */
+    -fx-background-color: #f4f5f7;
 }
 
-/* TableView Style */
 .table-view {
     -fx-background-color: white;
     -fx-background-radius: 8;
@@ -65,4 +62,27 @@
 .table-view .table-cell {
     -fx-border-color: transparent;
     -fx-padding: 10px;
+}
+
+.join-card {
+    -fx-background-color: #9b59b6;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-pref-height: 160px;
+    -fx-pref-width: 160px;
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-content-display: top;
+    -fx-graphic-text-gap: 10;
+    -fx-cursor: hand;
+    -fx-alignment: CENTER;
+}
+
+.join-card:hover {
+    -fx-background-color: #8e44ad;
+}
+
+.join-card .text {
+    -fx-fill: white;
 }

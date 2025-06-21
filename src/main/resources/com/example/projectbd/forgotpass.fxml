@@ -1,80 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-<Pane prefHeight="500.0" prefWidth="600.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MainApp.Forgotpass">
+<AnchorPane prefHeight="600.0" prefWidth="900.0" styleClass="root" stylesheets="@login-style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MainApp.Forgotpass">
     <children>
-
-        <!-- Right side pane -->
-        <StackPane layoutX="400.0" prefHeight="500.0" prefWidth="200.0" style="-fx-background-color: #E5D9F2;" />
-
-        <!-- Title -->
-        <Label layoutX="114.0" layoutY="30.0" prefHeight="42.0" prefWidth="155.0" text="STUDENT CLUB" textAlignment="CENTER">
-            <font>
-                <Font name="Times New Roman Bold" size="20.0" />
-            </font>
-        </Label>
-
-        <!-- Error Message -->
-        <HBox fx:id="errorBox" alignment="CENTER_LEFT" layoutX="28.0" layoutY="105.0" managed="false" prefWidth="340.0" spacing="10" style="-fx-background-color: #f8d7da; -fx-border-color: #f5c6cb; -fx-border-radius: 5; -fx-background-radius: 5; -fx-padding: 10;" visible="false">
+        <VBox alignment="CENTER" prefHeight="600.0" prefWidth="450.0" styleClass="left-panel" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <Button onAction="#hideError" style="-fx-background-color: transparent; -fx-text-fill: #721c24; -fx-font-size: 14px; -fx-alignment: CENTER;" text="✖" />
-                <Label fx:id="errorMessageLabel" style="-fx-font-size: 13px;" text="Invalid credentials." textFill="#721c24" wrapText="true" />
-            </children>
-        </HBox>
-
-        <!-- Username -->
-        <VBox layoutX="28.0" layoutY="160.0" prefWidth="340.0" spacing="5.0">
-            <children>
-                <Label text="Username" />
-                <TextField fx:id="usernameField" promptText="Enter your username" />
+                <Label styleClass="h1-white" text="RESET" />
+                <Label styleClass="h1-zad" text="PASSWORD" />
             </children>
         </VBox>
-        <!-- new Password -->
-        <VBox layoutX="28.0" layoutY="218.0" prefHeight="64.0" prefWidth="340.0">
+        <VBox alignment="CENTER" layoutX="450.0" prefHeight="600.0" prefWidth="450.0" styleClass="right-panel" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <Label text="New Password">
-                    <VBox.margin>
-                        <Insets bottom="3.0" top="3.0" />
-                    </VBox.margin>
-                </Label>
-                <StackPane>
+                <VBox alignment="CENTER_LEFT" maxWidth="350.0" prefWidth="350.0" spacing="10.0">
                     <children>
-                        <PasswordField fx:id="passwordField" prefWidth="320" promptText="Enter new password" />
-                        <TextField fx:id="visiblePasswordField" managed="false" prefWidth="320" promptText="Enter new password" visible="false" />
-                        <Button fx:id="togglePasswordButton" onAction="#togglePasswordVisibility" style="-fx-background-color: transparent;" text="👁" translateX="-5" StackPane.alignment="CENTER_RIGHT" />
+                        <Label styleClass="h1" text="Forgot Password?" />
+                        <Label styleClass="p" text="Enter your NRP and new password." />
+                        <Label text="NRP" />
+                        <TextField fx:id="usernameField" promptText="Enter your NRP" styleClass="text-field" />
+                        <Label text="New Password" />
+                        <HBox alignment="CENTER_LEFT" spacing="5.0">
+                            <StackPane HBox.hgrow="ALWAYS">
+                                <PasswordField fx:id="passwordField" promptText="Enter new password" styleClass="text-field" />
+                                <TextField fx:id="visiblePasswordField" managed="false" promptText="Enter new password" styleClass="text-field" visible="false" />
+                            </StackPane>
+                            <Button fx:id="togglePasswordButton" onAction="#togglePasswordVisibility" styleClass="toggle-button" text="👁" />
+                        </HBox>
+                        <Label text="Confirm New Password" />
+                        <HBox alignment="CENTER_LEFT" spacing="5.0">
+                            <StackPane HBox.hgrow="ALWAYS">
+                                <PasswordField fx:id="confirmPasswordField" promptText="Confirm new password" styleClass="text-field" />
+                                <TextField fx:id="visibleConfirmPasswordField" managed="false" promptText="Confirm new password" styleClass="text-field" visible="false" />
+                            </StackPane>
+                            <Button fx:id="toggleConfirmPasswordButton" onAction="#toggleConfirmPasswordVisibility" styleClass="toggle-button" text="👁" />
+                        </HBox>
+                        <Button onAction="#handleResetPassword" prefHeight="40.0" prefWidth="350.0" styleClass="login-button" text="Reset Password" />
+                        <HBox alignment="CENTER">
+                            <children>
+                                <Label styleClass="p" text="Remembered your password? " />
+                                <Hyperlink onAction="#goToLogin" text="Back to Login" />
+                            </children>
+                            <VBox.margin>
+                                <Insets top="15.0" />
+                            </VBox.margin>
+                        </HBox>
+                        <HBox fx:id="errorBox" alignment="CENTER" managed="false" styleClass="error-box" visible="false">
+                            <children>
+                                <Label fx:id="errorMessageLabel" text="Error Message" textFill="WHITE" />
+                            </children>
+                        </HBox>
                     </children>
-                </StackPane>
+                </VBox>
             </children>
         </VBox>
-        <!-- Confirm Password -->
-        <VBox layoutX="28.0" layoutY="276.0" prefHeight="64.0" prefWidth="340.0">
-            <children>
-                <Label text="Confirm New Password">
-                    <VBox.margin>
-                        <Insets bottom="3.0" top="3.0" />
-                    </VBox.margin>
-                </Label>
-                <StackPane>
-                    <children>
-                        <PasswordField fx:id="confirmPasswordField" prefWidth="320" promptText="Confirm new password" />
-                        <TextField fx:id="visibleConfirmPasswordField" managed="false" prefWidth="320" promptText="Confirm new password" visible="false" />
-                        <Button fx:id="toggleConfirmPasswordButton" onAction="#toggleConfirmPasswordVisibility" style="-fx-background-color: transparent;" text="👁" translateX="-5" StackPane.alignment="CENTER_RIGHT" />
-                    </children>
-                </StackPane>
-            </children>
-        </VBox>
-
-        <!-- Reset Password Button -->
-        <Button layoutX="63.0" layoutY="337.0" text="Reset Password" onAction="#handleResetPassword"
-                style="-fx-background-color: #1A237E; -fx-text-fill: white; -fx-font-weight: bold;" prefWidth="260.0" prefHeight="30.0" />
-
-        <!-- Back to login -->
-        <Label layoutX="64.0" layoutY="375.0" text="Remembered your password?" />
-        <Hyperlink layoutX="250.0" layoutY="371.0" text="Back to Login" onAction="#goToLogin" />
-
     </children>
-</Pane>
+</AnchorPane>
