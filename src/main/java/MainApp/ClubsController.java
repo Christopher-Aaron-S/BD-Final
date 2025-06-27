@@ -11,32 +11,28 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 import java.net.URL;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
-// import java.util.UUID; // Tidak lagi dibutuhkan
 
 public class ClubsController implements Initializable {
 
     @FXML private ScrollPane scrollPane;
-    @FXML private HBox clubHBox;
-    @FXML private Button leftButton;
-    @FXML private Button rightButton;
+    @FXML private FlowPane clubFlowPane; // Mengganti HBox menjadi FlowPane
     @FXML private VBox popupContainer;
     @FXML private Label popupClubName;
     @FXML private Text popupClubDescription;
 
     private Club selectedClub;
     private MainViewController mainController;
-
-    private final double CARD_WIDTH = 300;
-    private final double CARD_HEIGHT = 450;
 
     public void setMainController(MainViewController mainController) {
         this.mainController = mainController;
@@ -49,12 +45,12 @@ public class ClubsController implements Initializable {
     }
 
     private void loadClubsFromDB() {
-        if (clubHBox == null) {
-            System.err.println("clubHBox belum diinisialisasi. Periksa FXML.");
+        if (clubFlowPane == null) {
+            System.err.println("clubFlowPane belum diinisialisasi. Periksa FXML.");
             return;
         }
 
-        clubHBox.getChildren().clear();
+        clubFlowPane.getChildren().clear();
         Mahasiswa currentUser = HelloApplication.getLoggedInUser();
 
         if (currentUser == null) {
@@ -62,16 +58,12 @@ public class ClubsController implements Initializable {
             return;
         }
 
-        System.out.println("NRP saat ini: " + currentUser.getNrp());
-
-        String query = """
-            SELECT c.id_club, c.nama_club, c.deskripsi, c.tahun_berdiri,
-                   cat.id AS kategori_id, cat.nama_kategori,
-                   k.id_mahasiswa AS status_keanggotaan
-            FROM club c
-            JOIN kategori cat ON c.id_kategori = cat.id
-            LEFT JOIN keanggotaan k ON c.id_club = k.id_club AND k.id_mahasiswa = ?
-            """;
+        String query = "SELECT c.id_club, c.nama_club, c.deskripsi, c.tahun_berdiri, " +
+                "cat.id AS kategori_id, cat.nama_kategori, " +
+                "k.id_mahasiswa AS status_keanggotaan " +
+                "FROM club c " +
+                "JOIN kategori cat ON c.id_kategori = cat.id " +
+                "LEFT JOIN keanggotaan k ON c.id_club = k.id_club AND k.id_mahasiswa = ?";
 
         try (Connection conn = Connector.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -79,28 +71,14 @@ public class ClubsController implements Initializable {
             stmt.setString(1, currentUser.getNrp());
 
             try (ResultSet rs = stmt.executeQuery()) {
-                int count = 0;
                 while (rs.next()) {
-                    count++;
-                    Kategori kategori = new Kategori(
-                            rs.getInt("kategori_id"),
-                            rs.getString("nama_kategori")
-                    );
-
-                    Club club = new Club(
-                            rs.getInt("id_club"),
-                            rs.getString("nama_club"),
-                            rs.getString("deskripsi"),
-                            rs.getInt("tahun_berdiri"),
-                            kategori
-                    );
-
+                    Kategori kategori = new Kategori(rs.getInt("kategori_id"), rs.getString("nama_kategori"));
+                    Club club = new Club(rs.getInt("id_club"), rs.getString("nama_club"), rs.getString("deskripsi"), rs.getInt("tahun_berdiri"), kategori);
                     boolean isMember = rs.getString("status_keanggotaan") != null;
-                    StackPane card = createClubCard(club, isMember);
-                    clubHBox.getChildren().add(card);
+
+                    VBox card = createClubCard(club, isMember);
+                    clubFlowPane.getChildren().add(card);
                 }
-                System.out.println("Clubs ditemukan: " + count);
-                if (count == 0) System.err.println("Tidak ada club ditemukan!");
             }
 
         } catch (SQLException e) {
@@ -108,38 +86,28 @@ public class ClubsController implements Initializable {
         }
     }
 
-    private StackPane createClubCard(Club club, boolean isMember) {
-        StackPane cardPane = new StackPane();
-        cardPane.setPrefSize(CARD_WIDTH, CARD_HEIGHT);
-        cardPane.getStyleClass().add("club-carousel-card");
-
-        Region imagePlaceholder = new Region();
-        imagePlaceholder.setPrefSize(240, 200);
-        imagePlaceholder.getStyleClass().add("club-carousel-image-placeholder");
+    // Metode ini diubah untuk membuat kartu grid yang baru
+    private VBox createClubCard(Club club, boolean isMember) {
+        VBox card = new VBox(15);
+        card.getStyleClass().add("club-grid-card");
+        card.setAlignment(Pos.CENTER);
 
         Label title = new Label(club.getNamaClub());
-        title.getStyleClass().add("club-carousel-title");
+        title.getStyleClass().add("club-grid-title");
 
-        Button joinButton = new Button();
-        joinButton.getStyleClass().add("club-carousel-join-button");
+        Button joinButton = new Button("JOIN");
+        joinButton.getStyleClass().add("club-grid-join-button");
 
         if (isMember) {
             joinButton.setText("JOINED");
             joinButton.setDisable(true);
+            joinButton.getStyleClass().add("joined"); // Tambah kelas untuk styling "joined"
         } else {
-            joinButton.setText("JOIN");
-            joinButton.setDisable(false);
             joinButton.setOnAction(e -> showJoinPopup(club));
         }
 
-        VBox contentBox = new VBox(20, title, joinButton);
-        contentBox.setAlignment(Pos.CENTER);
-
-        VBox layout = new VBox(25, imagePlaceholder, contentBox);
-        layout.setAlignment(Pos.CENTER);
-        cardPane.getChildren().add(layout);
-
-        return cardPane;
+        card.getChildren().addAll(title, joinButton);
+        return card;
     }
 
     private void showJoinPopup(Club club) {
@@ -163,28 +131,14 @@ public class ClubsController implements Initializable {
             return;
         }
 
-        // --- PERBAIKAN DI SINI ---
-        // Hapus 'peran' dari daftar kolom di INSERT INTO
-        // Hapus 'id' dari daftar kolom di INSERT INTO (karena otomatis oleh DB)
-        // Sesuaikan indeks parameter yang tersisa
-        String sql = """
-            INSERT INTO keanggotaan (id_mahasiswa, id_club, tanggal_bergabung, status)
-            VALUES (?, ?, ?, ?)
-            """;
+        String sql = "INSERT INTO keanggotaan (id_mahasiswa, id_club, tanggal_bergabung, status) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = Connector.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            // Parameter pertama sekarang adalah id_mahasiswa
             stmt.setString(1, currentUser.getNrp());
-
-            // Parameter kedua sekarang adalah id_club
             stmt.setInt(2, selectedClub.getIdClub());
-
-            // Parameter ketiga adalah tanggal_bergabung
             stmt.setDate(3, new Date(System.currentTimeMillis()));
-
-            // Parameter keempat adalah status
             stmt.setString(4, "aktif");
 
             int rows = stmt.executeUpdate();
@@ -207,27 +161,5 @@ public class ClubsController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(msg);
         alert.showAndWait();
-    }
-
-    private void scrollTo(double hValue) {
-        if (scrollPane != null) scrollPane.setHvalue(hValue);
-    }
-
-    @FXML
-    private void scrollLeft() {
-        if (clubHBox != null && scrollPane != null && clubHBox.getWidth() > scrollPane.getViewportBounds().getWidth()) {
-            double scrollAmount = (CARD_WIDTH + clubHBox.getSpacing()) /
-                    (clubHBox.getWidth() - scrollPane.getViewportBounds().getWidth());
-            scrollTo(Math.max(0, scrollPane.getHvalue() - scrollAmount));
-        }
-    }
-
-    @FXML
-    private void scrollRight() {
-        if (clubHBox != null && scrollPane != null && clubHBox.getWidth() > scrollPane.getViewportBounds().getWidth()) {
-            double scrollAmount = (CARD_WIDTH + clubHBox.getSpacing()) /
-                    (clubHBox.getWidth() - scrollPane.getViewportBounds().getWidth());
-            scrollTo(Math.min(1, scrollPane.getHvalue() + scrollAmount));
-        }
     }
 }

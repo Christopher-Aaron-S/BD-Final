@@ -33,56 +33,67 @@ public class MainViewController {
         }
     }
 
+    @FXML
     public void initialize() {
+        // Inisialisasi daftar tombol sidebar
         sidebarButtons = Arrays.asList(dashboardButton, clubsButton, activitiesButton, myProfileButton, settingsButton);
-        showDashboard();
+        // Tampilkan dashboard saat pertama kali dibuka
+        if (currentUser == null) {
+            showDashboard();
+        }
     }
 
     public void setUser(Mahasiswa user) {
         this.currentUser = user;
+        // Setelah user di-set, tampilkan dashboard sebagai halaman awal
         showDashboard();
     }
 
     private void updateActiveButton(Button selectedButton) {
+        // Hapus kelas 'active' dari semua tombol
         for (Button button : sidebarButtons) {
             if (button != null) {
                 button.getStyleClass().remove("active");
             }
         }
+        // Tambahkan kelas 'active' hanya pada tombol yang dipilih
         if (selectedButton != null) {
             selectedButton.getStyleClass().add("active");
-            selectedButton.requestFocus();
         }
     }
 
     @FXML
     public void showDashboard() {
         loadPage("/com/example/projectbd/dashboard.fxml");
+        // PERBAIKAN: Pastikan tombol yang benar (dashboardButton) diaktifkan
         updateActiveButton(dashboardButton);
     }
 
     @FXML
     public void showClubs() {
-        // --- PERBAIKAN DI SINI ---
         loadPage("/com/example/projectbd/ClubView.fxml");
+        // PERBAIKAN: Pastikan tombol yang benar (clubsButton) diaktifkan
         updateActiveButton(clubsButton);
     }
 
     @FXML
     public void showActivities() {
         loadPage("/com/example/projectbd/ActivitiesView.fxml");
+        // PERBAIKAN: Pastikan tombol yang benar (activitiesButton) diaktifkan
         updateActiveButton(activitiesButton);
     }
 
     @FXML
     private void showMyProfile() {
         System.out.println("Navigasi ke Halaman My Profile (belum diimplementasikan)");
+        // PERBAIKAN: Pastikan tombol yang benar (myProfileButton) diaktifkan
         updateActiveButton(myProfileButton);
     }
 
     @FXML
     private void showSettings() {
-        System.out.println("Navigasi ke Halaman Settings (belum diimplementasikan)");
+        loadPage("/com/example/projectbd/Settings.fxml");
+        // PERBAIKAN: Pastikan tombol yang benar (settingsButton) diaktifkan
         updateActiveButton(settingsButton);
     }
 
@@ -95,9 +106,11 @@ public class MainViewController {
                 this.dashboardController = loader.getController();
                 dashboardController.setUser(currentUser);
                 dashboardController.setMainController(this);
-            } else if (fxmlPath.contains("ClubView.fxml")) { // Sekarang kondisi ini akan terpenuhi
+            } else if (fxmlPath.contains("ClubView.fxml")) {
                 ClubsController controller = loader.getController();
                 controller.setMainController(this);
+            } else if (fxmlPath.contains("Settings.fxml")) {
+                // Tidak ada setup khusus untuk SettingsController saat ini
             }
 
             contentArea.getChildren().setAll(root);
