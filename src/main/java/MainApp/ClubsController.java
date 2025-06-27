@@ -27,7 +27,7 @@ import java.util.ResourceBundle;
 public class ClubsController implements Initializable {
 
     @FXML private ScrollPane scrollPane;
-    @FXML private FlowPane clubFlowPane; // Mengganti HBox menjadi FlowPane
+    @FXML private FlowPane clubFlowPane;
     @FXML private VBox popupContainer;
     @FXML private Label popupClubName;
     @FXML private Text popupClubDescription;
@@ -64,7 +64,7 @@ public class ClubsController implements Initializable {
                 "k.id_mahasiswa AS status_keanggotaan " +
                 "FROM club c " +
                 "JOIN kategori cat ON c.id_kategori = cat.id " +
-                "LEFT JOIN keanggotaan k ON c.id_club = k.id_club AND k.id_mahasiswa = ?";
+                "LEFT JOIN keanggotaan k ON c.id_club = k.id_club AND k.id_mahasiswa = ? AND k.status = 'aktif'";
 
         try (Connection conn = Connector.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -87,7 +87,6 @@ public class ClubsController implements Initializable {
         }
     }
 
-    // Metode ini diubah untuk membuat kartu grid yang baru
     private VBox createClubCard(Club club, boolean isMember) {
         VBox card = new VBox(15);
         card.getStyleClass().add("club-grid-card");
@@ -102,7 +101,7 @@ public class ClubsController implements Initializable {
         if (isMember) {
             joinButton.setText("JOINED");
             joinButton.setDisable(true);
-            joinButton.getStyleClass().add("joined"); // Tambah kelas untuk styling "joined"
+            joinButton.getStyleClass().add("joined");
         } else {
             joinButton.setOnAction(e -> showJoinPopup(club));
         }

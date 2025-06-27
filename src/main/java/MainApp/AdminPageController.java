@@ -7,8 +7,7 @@ import Entity.Mahasiswa;
 import Entity.Keanggotaan;
 import Entity.KegiatanClub;
 import Entity.JenisKegiatan;
-import Entity.Ruang; // Menggunakan Ruang sesuai permintaan
-import javafx.scene.control.DialogPane;
+import Entity.Ruang;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,7 +16,7 @@ import javafx.collections.transformation.SortedList;
 
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos; // Import Pos
+import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -30,12 +29,16 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Spinner; // Import Spinner
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time; // Import java.sql.Time
 import java.time.LocalDate;
+import java.time.LocalTime; // Import LocalTime
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
@@ -50,6 +53,15 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.util.Callback;
 import javafx.scene.control.TableCell;
+import javafx.scene.control.SpinnerValueFactory; // Import SpinnerValueFactory
+import javafx.scene.control.cell.ComboBoxTableCell;
+
+
+// No longer needed for pop-up
+// import javafx.stage.Modality;
+// import javafx.stage.Stage;
+// import javafx.scene.Scene;
+import javafx.scene.control.Separator; // Added for visual separation in details
 
 
 public class AdminPageController {
@@ -94,23 +106,55 @@ public class AdminPageController {
     @FXML private Button backToClubListButton;
 
     // FXML Elements untuk Activities
-    @FXML private VBox yourActivitiesPane;
+    @FXML private HBox yourActivitiesPane;
     @FXML private TextField addActivityNameField;
     @FXML private TextArea addActivityDescriptionField;
     @FXML private DatePicker addActivityStartDatePicker;
-    @FXML private ComboBox<Ruang> addActivityRoomComboBox; // Tipe ComboBox menggunakan Ruang
+    // Hapus @FXML private DatePicker addActivityEndDatePicker;
+
+    // Tambahkan Spinner untuk Jam Mulai dan Jam Selesai
+    @FXML private Spinner<Integer> addActivityStartHourSpinner;
+    @FXML private Spinner<Integer> addActivityStartMinuteSpinner;
+    @FXML private Spinner<Integer> addActivityEndHourSpinner;
+    @FXML private Spinner<Integer> addActivityEndMinuteSpinner;
+
+
+    @FXML private ComboBox<Ruang> addActivityRoomComboBox;
     @FXML private ComboBox<JenisKegiatan> addActivityTypeComboBox;
     @FXML private ComboBox<Club> addActivityClubComboBox;
     @FXML private Button addActivityButton;
+
+    // NEW FXML Elements for Activity Details Container
+    @FXML private VBox activityDetailsContainer;
+    @FXML private Button backToActivityListButton;
+    @FXML private Label detailActivityNameLabel;
+    @FXML private Label detailActivityDescriptionLabel;
+    @FXML private Label detailActivityClubLabel;
+    @FXML private Label detailActivityDateLabel;
+    @FXML private Label detailActivityTimeLabel;
+    @FXML private Label detailActivityRoomLabel;
+    @FXML private Label detailActivityTypeLabel;
+
+    // FXML elements for Absensi Table
+    @FXML private TableView<AbsensiDisplay> anggotaKegiatanTableView;
+    @FXML private TableColumn<AbsensiDisplay, Integer> colNoMahasiswaAbsen;
+    @FXML private TableColumn<AbsensiDisplay, String> colNamaMahasiswaAbsen;
+    @FXML private TableColumn<AbsensiDisplay, String> colNRPMahasiswaAbsen;
+    @FXML private TableColumn<AbsensiDisplay, String> colKehadiranAbsen;
+    @FXML private TableColumn<AbsensiDisplay, String> colSertifikatAbsen;
+    @FXML private TableColumn<AbsensiDisplay, Void> colActionAbsen;
 
 
     private List<Button> sidebarButtons;
     private MainViewController mainController;
     private Mahasiswa currentUser;
     private int currentClubId;
+    private int currentActivityId; // To store the ID of the currently viewed activity
 
     private ObservableList<KeanggotaanDisplay> masterAnggotaList;
     private FilteredList<KeanggotaanDisplay> filteredAnggotaList;
+
+    private ObservableList<AbsensiDisplay> masterAbsensiList;
 
 
     public void setMainController(MainViewController mainController) {
@@ -136,11 +180,34 @@ public class AdminPageController {
         loadJenisKegiatanForActivityComboBox();
         loadRuanganForActivityComboBox(); // Muat data ruangan
 
+        // Ensure only one main container is visible at startup
         showClubListContainer();
 
         if (backToClubListButton != null) {
             backToClubListButton.setOnAction(event -> handleBackToClubList());
         }
+        // Initialize the new back button for activities
+        if (backToActivityListButton != null) {
+            backToActivityListButton.setOnAction(event -> handleBackToActivityList());
+        }
+
+        // Inisialisasi Spinner untuk Jam/Menit
+        // Inisialisasi Spinner untuk Jam Mulai
+        SpinnerValueFactory<Integer> startHourValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 0);
+        addActivityStartHourSpinner.setValueFactory(startHourValueFactory);
+        SpinnerValueFactory<Integer> startMinuteValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0);
+        addActivityStartMinuteSpinner.setValueFactory(startMinuteValueFactory);
+        addActivityStartHourSpinner.setEditable(true);
+        addActivityStartMinuteSpinner.setEditable(true);
+
+        // Inisialisasi Spinner untuk Jam Selesai
+        SpinnerValueFactory<Integer> endHourValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 0);
+        addActivityEndHourSpinner.setValueFactory(endHourValueFactory);
+        SpinnerValueFactory<Integer> endMinuteValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0);
+        addActivityEndMinuteSpinner.setValueFactory(endMinuteValueFactory);
+        addActivityEndHourSpinner.setEditable(true);
+        addActivityEndMinuteSpinner.setEditable(true);
+
 
         if (anggotaClubTableView != null) {
             colNoMahasiswa.setCellValueFactory(new PropertyValueFactory<>("noUrut"));
@@ -197,6 +264,65 @@ public class AdminPageController {
                 });
             }
         }
+
+        // Initialize Absensi Table
+        // Initialize Absensi Table
+        if (anggotaKegiatanTableView != null) {
+            colNoMahasiswaAbsen.setCellValueFactory(new PropertyValueFactory<>("noUrut"));
+            colNamaMahasiswaAbsen.setCellValueFactory(new PropertyValueFactory<>("namaMahasiswa"));
+            colNRPMahasiswaAbsen.setCellValueFactory(new PropertyValueFactory<>("nrpMahasiswa"));
+
+            // Setup ComboBox for Kehadiran
+            ObservableList<String> kehadiranOptions = FXCollections.observableArrayList("Hadir", "Izin", "Alpha");
+            colKehadiranAbsen.setCellValueFactory(new PropertyValueFactory<>("kehadiran"));
+            colKehadiranAbsen.setEditable(true); // <--- ADD THIS LINE
+            colKehadiranAbsen.setCellFactory(ComboBoxTableCell.forTableColumn(kehadiranOptions));
+            colKehadiranAbsen.setOnEditCommit(event -> {
+                AbsensiDisplay absensi = event.getRowValue();
+                absensi.setKehadiran(event.getNewValue());
+                // Update sertifikat based on kehadiran
+                if ("Hadir".equals(event.getNewValue())) {
+                    absensi.setSertifikat("Dapat");
+                } else {
+                    absensi.setSertifikat("Tidak Dapat");
+                }
+                anggotaKegiatanTableView.refresh(); // Refresh the table to show certificate change
+            });
+
+            colSertifikatAbsen.setCellValueFactory(new PropertyValueFactory<>("sertifikat"));
+            // Make Sertifikat column non-editable
+            colSertifikatAbsen.setEditable(false);
+
+            colActionAbsen.setCellFactory(new Callback<TableColumn<AbsensiDisplay, Void>, TableCell<AbsensiDisplay, Void>>() {
+                @Override
+                public TableCell<AbsensiDisplay, Void> call(final TableColumn<AbsensiDisplay, Void> param) {
+                    final TableCell<AbsensiDisplay, Void> cell = new TableCell<AbsensiDisplay, Void>() {
+                        private final Button btn = new Button("Hapus");
+                        {
+                            btn.setStyle("-fx-background-color: #dc3545; -fx-text-fill: white; -fx-background-radius: 5;");
+                            btn.setOnAction(event -> {
+                                AbsensiDisplay absensi = getTableView().getItems().get(getIndex());
+                                handleDeleteAbsensi(currentActivityId, absensi.getNrpMahasiswa());
+                            });
+                        }
+                        @Override
+                        public void updateItem(Void item, boolean empty) {
+                            super.updateItem(item, empty);
+                            if (empty) {
+                                setGraphic(null);
+                            } else {
+                                setGraphic(btn);
+                            }
+                        }
+                    };
+                    return cell;
+                }
+            });
+
+            masterAbsensiList = FXCollections.observableArrayList();
+            anggotaKegiatanTableView.setItems(masterAbsensiList);
+            anggotaKegiatanTableView.setEditable(true); // Make the table editable for attendance
+        }
     }
 
     public static class KeanggotaanDisplay {
@@ -230,22 +356,67 @@ public class AdminPageController {
         public SimpleStringProperty statusProperty() { return status; }
     }
 
+    public static class AbsensiDisplay {
+        private final SimpleIntegerProperty noUrut;
+        private final SimpleStringProperty namaMahasiswa;
+        private final SimpleStringProperty nrpMahasiswa;
+        private final SimpleStringProperty kehadiran;
+        private final SimpleStringProperty sertifikat;
+
+        public AbsensiDisplay(int noUrut, String namaMahasiswa, String nrpMahasiswa, String kehadiran, String sertifikat) {
+            this.noUrut = new SimpleIntegerProperty(noUrut);
+            this.namaMahasiswa = new SimpleStringProperty(namaMahasiswa);
+            this.nrpMahasiswa = new SimpleStringProperty(nrpMahasiswa);
+            this.kehadiran = new SimpleStringProperty(kehadiran);
+            this.sertifikat = new SimpleStringProperty(sertifikat);
+        }
+
+        public int getNoUrut() { return noUrut.get(); }
+        public SimpleIntegerProperty noUrutProperty() { return noUrut; }
+
+        public String getNamaMahasiswa() { return namaMahasiswa.get(); }
+        public SimpleStringProperty namaMahasiswaProperty() { return namaMahasiswa; }
+
+        public String getNrpMahasiswa() { return nrpMahasiswa.get(); }
+        public SimpleStringProperty nrpMahasiswaProperty() { return nrpMahasiswa; }
+
+        public String getKehadiran() { return kehadiran.get(); }
+        public void setKehadiran(String kehadiran) { this.kehadiran.set(kehadiran); }
+        public SimpleStringProperty kehadiranProperty() { return kehadiran; }
+
+        public String getSertifikat() { return sertifikat.get(); }
+        public void setSertifikat(String sertifikat) { this.sertifikat.set(sertifikat); }
+        public SimpleStringProperty sertifikatProperty() { return sertifikat; }
+    }
+
+
     private void showClubListContainer() {
         if (clubListContainer != null) clubListContainer.setVisible(true);
         if (clubDetailsContainer != null) clubDetailsContainer.setVisible(false);
         if (activityListContainer != null) activityListContainer.setVisible(false);
+        if (activityDetailsContainer != null) activityDetailsContainer.setVisible(false); // Ensure activity details is hidden
     }
 
     private void showClubDetailsContainer() {
         if (clubListContainer != null) clubListContainer.setVisible(false);
         if (clubDetailsContainer != null) clubDetailsContainer.setVisible(true);
         if (activityListContainer != null) activityListContainer.setVisible(false);
+        if (activityDetailsContainer != null) activityDetailsContainer.setVisible(false); // Ensure activity details is hidden
     }
 
     private void showActivityListContainer() {
         if (clubListContainer != null) clubListContainer.setVisible(false);
         if (clubDetailsContainer != null) clubDetailsContainer.setVisible(false);
         if (activityListContainer != null) activityListContainer.setVisible(true);
+        if (activityDetailsContainer != null) activityDetailsContainer.setVisible(false); // Ensure activity details is hidden
+    }
+
+    // New method to show activity details container
+    private void showActivityDetailsContainer() {
+        if (clubListContainer != null) clubListContainer.setVisible(false);
+        if (clubDetailsContainer != null) clubDetailsContainer.setVisible(false);
+        if (activityListContainer != null) activityListContainer.setVisible(false);
+        if (activityDetailsContainer != null) activityDetailsContainer.setVisible(true);
     }
 
     @FXML
@@ -257,6 +428,11 @@ public class AdminPageController {
         if (searchNrpField != null) {
             searchNrpField.clear();
         }
+    }
+
+    @FXML
+    private void handleBackToActivityList() {
+        showActivityListContainer();
     }
 
     private String loadProgramName(int programId) {
@@ -289,6 +465,267 @@ public class AdminPageController {
             selectedButton.setStyle("-fx-background-color: #6a0dad; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-size: 14;");
         }
     }
+    public void loadAllActivities() {
+        yourActivitiesPane.getChildren().clear();
+        String sql = "SELECT kc.id, kc.nama_kegiatan, kc.deskripsi, kc.tanggal_kegiatan, kc.jam_mulai, kc.jam_selesai,\n" +
+                "       kc.id_ruang, r.no_ruangan, jk.nama_jenis, c.nama_club\n" +
+                "FROM kegiatan_club kc\n" +
+                "JOIN club c ON kc.id_club = c.id_club\n" +
+                "LEFT JOIN jenis_kegiatan jk ON kc.id_jenis = jk.id\n" +
+                "LEFT JOIN ruang r ON kc.id_ruang = r.id\n" +
+                "ORDER BY kc.tanggal_kegiatan DESC, kc.jam_mulai ASC";
+
+        try (Connection conn = Connector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            if (!rs.isBeforeFirst()) {
+                Label noActivitiesLabel = new Label("Belum ada kegiatan yang terdaftar.");
+                noActivitiesLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #888;");
+                // For FlowPane, centering can be achieved by wrapping in a VBox/HBox and setting alignment
+                VBox centeredMessage = new VBox(noActivitiesLabel);
+                centeredMessage.setAlignment(Pos.CENTER);
+                centeredMessage.setPrefSize(yourActivitiesPane.getPrefWidth(), yourActivitiesPane.getPrefHeight()); // Occupy available space
+                yourActivitiesPane.getChildren().add(centeredMessage);
+            } else {
+                // FlowPane automatically handles wrapping, so no need for manual alignment reset here.
+                // Padding and spacing are set in the constructor for FlowPane.
+
+                while (rs.next()) {
+                    int idActivity = rs.getInt("id");
+                    String namaActivity = rs.getString("nama_kegiatan");
+                    String deskripsiActivity = rs.getString("deskripsi");
+                    LocalDate tanggalKegiatan = rs.getDate("tanggal_kegiatan") != null ? rs.getDate("tanggal_kegiatan").toLocalDate() : null;
+                    LocalTime jamMulai = rs.getTime("jam_mulai") != null ? rs.getTime("jam_mulai").toLocalTime() : null;
+                    LocalTime jamSelesai = rs.getTime("jam_selesai") != null ? rs.getTime("jam_selesai").toLocalTime() : null;
+                    String ruanganNo = rs.getString("no_ruangan"); // Directly get no_ruangan from JOIN
+                    String namaJenis = rs.getString("nama_jenis");
+                    String namaClub = rs.getString("nama_club");
+
+                    // Create the activity card similar to clubCard
+                    VBox activityCard = new VBox();
+                    activityCard.setPrefSize(200, 250); // Consistent size
+                    activityCard.setStyle("-fx-background-color: #6a0dad; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 5);");
+
+                    // White area for details
+                    VBox topWhiteArea = new VBox();
+                    topWhiteArea.setPrefHeight(150); // Consistent height
+                    topWhiteArea.setStyle("-fx-background-color: white; -fx-background-radius: 15 15 0 0;");
+                    topWhiteArea.setAlignment(Pos.TOP_LEFT); // Align content inside the white area
+                    topWhiteArea.setPadding(new Insets(10)); // Padding inside the white area
+                    topWhiteArea.setSpacing(5); // Spacing between labels in white area
+
+                    Label clubNameLabel = new Label("Klub: " + namaClub);
+                    clubNameLabel.setFont(Font.font("System", FontWeight.NORMAL, 12));
+                    topWhiteArea.getChildren().add(clubNameLabel);
+
+                    if (tanggalKegiatan != null) {
+                        Label dateLabel = new Label("Tanggal: " + tanggalKegiatan.format(DateTimeFormatter.ofPattern("dd MMM yyyy")));
+                        dateLabel.setFont(Font.font("System", FontWeight.NORMAL, 12));
+                        topWhiteArea.getChildren().add(dateLabel);
+                    }
+                    if (jamMulai != null && jamSelesai != null) {
+                        Label timeLabel = new Label("Waktu: " + jamMulai.format(DateTimeFormatter.ofPattern("HH:mm")) + " - " + jamSelesai.format(DateTimeFormatter.ofPattern("HH:mm")));
+                        timeLabel.setFont(Font.font("System", FontWeight.NORMAL, 12));
+                        topWhiteArea.getChildren().add(timeLabel);
+                    }
+                    if (ruanganNo != null && !ruanganNo.isEmpty()) {
+                        Label roomLabel = new Label("Ruangan: " + ruanganNo);
+                        roomLabel.setFont(Font.font("System", FontWeight.NORMAL, 12));
+                        topWhiteArea.getChildren().add(roomLabel);
+                    }
+                    if (namaJenis != null && !namaJenis.isEmpty()) {
+                        Label typeLabel = new Label("Jenis: " + namaJenis);
+                        typeLabel.setFont(Font.font("System", FontWeight.NORMAL, 12));
+                        topWhiteArea.getChildren().add(typeLabel);
+                    }
+
+                    // Activity Name Label (moved to purple section)
+                    Label activityNameLabel = new Label(namaActivity);
+                    activityNameLabel.setFont(Font.font("System", FontWeight.BOLD, 18));
+                    activityNameLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+                    activityNameLabel.setPadding(new Insets(10, 0, 0, 0)); // Padding from top of purple area
+                    activityNameLabel.setWrapText(true); // Allow text to wrap
+
+                    VBox textContainer = new VBox(activityNameLabel);
+                    textContainer.setAlignment(Pos.CENTER);
+                    VBox.setVgrow(textContainer, javafx.scene.layout.Priority.ALWAYS); // Allow textContainer to grow vertically
+
+
+                    HBox buttonContainer = new HBox(5);
+                    buttonContainer.setAlignment(Pos.CENTER);
+                    buttonContainer.setPadding(new Insets(0, 10, 10, 10));
+
+                    Button openButton = new Button("Open");
+                    openButton.setStyle("-fx-background-color: #17a2b8; -fx-text-fill: white; -fx-background-radius: 5;");
+                    openButton.setMaxWidth(Double.MAX_VALUE);
+                    HBox.setHgrow(openButton, javafx.scene.layout.Priority.ALWAYS);
+                    // Pass all relevant details to the handleOpenActivityDetails method
+                    openButton.setOnAction(event -> handleOpenActivityDetails(idActivity, namaActivity, deskripsiActivity, tanggalKegiatan, jamMulai, jamSelesai, ruanganNo, namaJenis, namaClub));
+
+
+                    Button deleteButton = new Button("Delete");
+                    deleteButton.setStyle("-fx-background-color: #dc3545; -fx-text-fill: white; -fx-background-radius: 5;");
+                    deleteButton.setMaxWidth(Double.MAX_VALUE);
+                    HBox.setHgrow(deleteButton, javafx.scene.layout.Priority.ALWAYS);
+                    deleteButton.setOnAction(event -> handleDeleteActivity(idActivity, namaActivity));
+
+                    buttonContainer.getChildren().addAll(openButton, deleteButton);
+
+                    // Add elements to the activity card, mirroring clubCard structure
+                    activityCard.getChildren().addAll(topWhiteArea, textContainer, buttonContainer);
+                    yourActivitiesPane.getChildren().add(activityCard);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Database Error", "Gagal memuat daftar kegiatan: " + e.getMessage());
+        }
+    }
+
+    private void handleOpenActivityDetails(int idActivity, String namaActivity, String deskripsiActivity, LocalDate tanggalKegiatan, LocalTime jamMulai, LocalTime jamSelesai, String ruanganNo, String namaJenis, String namaClub) {
+        this.currentActivityId = idActivity; // Set the current activity ID
+        showActivityDetailsContainer();
+
+        detailActivityNameLabel.setText("Nama Kegiatan: " + namaActivity);
+        detailActivityDescriptionLabel.setText("Deskripsi: " + deskripsiActivity);
+        detailActivityClubLabel.setText("Club Penyelenggara: " + namaClub);
+        detailActivityDateLabel.setText("Tanggal: " + (tanggalKegiatan != null ? tanggalKegiatan.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")) : "N/A"));
+        detailActivityTimeLabel.setText("Waktu: " + (jamMulai != null ? jamMulai.format(DateTimeFormatter.ofPattern("HH:mm")) : "N/A") + " - " + (jamSelesai != null ? jamSelesai.format(DateTimeFormatter.ofPattern("HH:mm")) : "N/A"));
+        detailActivityRoomLabel.setText("Ruangan: " + (ruanganNo != null && !ruanganNo.isEmpty() ? ruanganNo : "N/A"));
+        detailActivityTypeLabel.setText("Jenis Kegiatan: " + (namaJenis != null && !namaJenis.isEmpty() ? namaJenis : "N/A"));
+
+        loadAbsensiForActivity(idActivity);
+    }
+
+    private void loadAbsensiForActivity(int idActivity) {
+        masterAbsensiList.clear();
+        // Corrected table name to 'absen' and column names to 'status_kehadiran', 'status_sertifikat'
+        String sql = "SELECT u.nama, u.nrp, a.status_kehadiran, a.status_sertifikat " +
+                "FROM absen a " +
+                "JOIN users u ON a.id_mahasiswa = u.nrp " +
+                "WHERE a.id_kegiatan_club = ? " +
+                "ORDER BY u.nama";
+        try (Connection conn = Connector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, idActivity);
+            ResultSet rs = pstmt.executeQuery();
+            int noUrut = 1;
+            while (rs.next()) {
+                String namaMhs = rs.getString("nama");
+                String nrpMhs = rs.getString("nrp");
+                // Corrected column names to 'status_kehadiran', 'status_sertifikat'
+                String kehadiran = rs.getString("status_kehadiran"); // <-- CHANGED HERE
+                String sertifikat = rs.getString("status_sertifikat"); // <-- CHANGED HERE
+
+                // If no record in absen table (due to LEFT JOIN), default to "Alpha" and "Tidak Dapat"
+                if (kehadiran == null) {
+                    kehadiran = "Alpha";
+                    sertifikat = "Tidak Dapat";
+                }
+                masterAbsensiList.add(new AbsensiDisplay(noUrut++, namaMhs, nrpMhs, kehadiran, sertifikat));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Database Error", "Gagal memuat daftar absensi: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleSaveAbsensi() {
+        boolean allUpdatesSuccessful = true; // To track if all intended updates found a record
+        for (AbsensiDisplay absensi : masterAbsensiList) {
+            // SQL to update an existing record
+            String updateSql = "UPDATE absen SET status_kehadiran = ?, status_sertifikat = ? WHERE id_kegiatan_club = ? AND id_mahasiswa = ?";
+            try (Connection conn = Connector.getConnection();
+                 PreparedStatement updatePstmt = conn.prepareStatement(updateSql)) {
+                updatePstmt.setString(1, absensi.getKehadiran());
+                updatePstmt.setString(2, absensi.getSertifikat());
+                updatePstmt.setInt(3, currentActivityId);
+                updatePstmt.setString(4, absensi.getNrpMahasiswa());
+
+                int rowsAffected = updatePstmt.executeUpdate();
+
+                if (rowsAffected == 0) {
+                    // If no record was updated, it means it doesn't exist.
+                    // As per your request, we do NOT insert new records here.
+                    // You might want to log this or show a specific message to the user.
+                    System.out.println("Peringatan: Catatan absensi tidak ditemukan untuk " + absensi.getNamaMahasiswa() + " (NRP: " + absensi.getNrpMahasiswa() + ") pada kegiatan ini. Penyimpanan dilewati.");
+                    allUpdatesSuccessful = false; // Mark that at least one update failed to find a record
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                showAlert(Alert.AlertType.ERROR, "Database Error", "Gagal menyimpan absensi untuk " + absensi.getNamaMahasiswa() + ": " + e.getMessage());
+                allUpdatesSuccessful = false; // Mark that at least one update resulted in an error
+                // You might choose to `return;` here to stop processing on the first error,
+                // but continuing allows other records to potentially be saved.
+            }
+        }
+
+        if (allUpdatesSuccessful) {
+            showAlert(Alert.AlertType.INFORMATION, "Sukses", "Absensi berhasil diperbarui!");
+        } else {
+            showAlert(Alert.AlertType.WARNING, "Pembaruan Sebagian/Gagal", "Beberapa catatan absensi mungkin tidak diperbarui. Pastikan data mahasiswa sudah ada di database absensi untuk kegiatan ini.");
+        }
+        loadAbsensiForActivity(currentActivityId); // Reload the attendance list to show confirmed changes
+    }
+
+    private void handleDeleteAbsensi(int idKegiatanClub, String nrpMahasiswa) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Konfirmasi Penghapusan Absensi");
+        alert.setHeaderText("Hapus Absensi Ini?");
+        alert.setContentText("Anda yakin ingin menghapus catatan absensi mahasiswa dengan NRP '" + nrpMahasiswa + "' untuk kegiatan ini?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            String sql = "DELETE FROM absen WHERE id_kegiatan_club = ? AND id_mahasiswa = ?";
+            try (Connection conn = Connector.getConnection();
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, idKegiatanClub);
+                pstmt.setString(2, nrpMahasiswa);
+
+                int rowsAffected = pstmt.executeUpdate();
+                if (rowsAffected > 0) {
+                    showAlert(Alert.AlertType.INFORMATION, "Sukses", "Catatan absensi berhasil dihapus.");
+                    loadAbsensiForActivity(idKegiatanClub); // Reload absensi after deletion
+                } else {
+                    showAlert(Alert.AlertType.WARNING, "Gagal", "Catatan absensi gagal dihapus.");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                showAlert(Alert.AlertType.ERROR, "Database Error", "Terjadi kesalahan database saat menghapus absensi: " + e.getMessage());
+            }
+        }
+    }
+
+
+    private void handleDeleteActivity(int idActivity, String namaActivity) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Konfirmasi Penghapusan Kegiatan");
+        alert.setHeaderText("Hapus Kegiatan Ini?");
+        alert.setContentText("Anda yakin ingin menghapus kegiatan '" + namaActivity + "'? Tindakan ini tidak dapat dibatalkan.");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            String sql = "DELETE FROM kegiatan_club WHERE id = ?";
+            try (Connection conn = Connector.getConnection();
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, idActivity);
+
+                int rowsAffected = pstmt.executeUpdate();
+                if (rowsAffected > 0) {
+                    showAlert(Alert.AlertType.INFORMATION, "Sukses", "Kegiatan '" + namaActivity + "' berhasil dihapus.");
+                    loadAllActivities(); // Reload activities after deletion
+                } else {
+                    showAlert(Alert.AlertType.WARNING, "Gagal", "Kegiatan gagal dihapus.");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                showAlert(Alert.AlertType.ERROR, "Database Error", "Terjadi kesalahan database saat menghapus kegiatan: " + e.getMessage());
+            }
+        }
+    }
+
 
     public void loadAllClubs() {
         yourClubsPane.getChildren().clear();
@@ -391,13 +828,13 @@ public class AdminPageController {
 
     private void loadJenisKegiatanForActivityComboBox() {
         ObservableList<JenisKegiatan> jenisKegiatanList = FXCollections.observableArrayList();
+        // Asumsi kolom ID di jenis_kegiatan adalah 'id' (integer)
         String sql = "SELECT id, nama_jenis FROM jenis_kegiatan ORDER BY nama_jenis";
         try (Connection conn = Connector.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
-                // Asumsi JenisKegiatan memiliki konstruktor JenisKegiatan(int id, String nama)
                 jenisKegiatanList.add(new JenisKegiatan(rs.getInt("id"), rs.getString("nama_jenis")));
             }
             addActivityTypeComboBox.setItems(jenisKegiatanList);
@@ -410,26 +847,20 @@ public class AdminPageController {
     // Metode baru untuk memuat ruangan ke ComboBox
     private void loadRuanganForActivityComboBox() {
         ObservableList<Ruang> ruanganList = FXCollections.observableArrayList();
-        // Query untuk mengambil ID (String) dan no_ruangan (String). id_lantai tidak diambil karena tidak digunakan oleh objek Ruang.
+        // Sesuai skema image_cd89ba.png, ID di tabel 'ruang' adalah INTEGER.
         String sql = "SELECT id, no_ruangan FROM ruang ORDER BY no_ruangan";
         try (Connection conn = Connector.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
-                String idRuangStr = rs.getString("id"); // ID dari DB adalah String
+                int idRuang = rs.getInt("id"); // Mengambil ID ruangan sebagai INTEGER
                 String noRuangan = rs.getString("no_ruangan");
-
-                int idRuangInt;
-                try {
-                    idRuangInt = Integer.parseInt(idRuangStr); // Konversi ID ke int
-                } catch (NumberFormatException e) {
-                    System.err.println("Error parsing idRuang '" + idRuangStr + "' to int. Skipping this room. " + e.getMessage());
-                    continue; // Lewati baris ini jika konversi gagal
-                }
-
-                // Asumsi Entity.Ruang memiliki konstruktor Ruang(int idRuang, String noRuangan)
-                ruanganList.add(new Ruang(idRuangInt, noRuangan));
+                // Sesuaikan konstruktor Ruang Anda jika memerlukan objek Lantai,
+                // atau pastikan ada konstruktor yang menerima int id dan String noRuangan.
+                // Untuk sementara, saya asumsikan konstruktor Ruang(int, String, Lantai) ada,
+                // dan Lantai bisa null atau objek default jika tidak relevan untuk ComboBox.
+                ruanganList.add(new Ruang(idRuang, noRuangan)); // Lantai di set null, sesuaikan jika perlu
             }
             addActivityRoomComboBox.setItems(ruanganList);
         } catch (SQLException e) {
@@ -599,7 +1030,6 @@ public class AdminPageController {
         }
     }
 
-
     private String getKategoriNameById(int idKategori) {
         String kategoriName = "Unknown Kategori";
         String sql = "SELECT nama_kategori FROM kategori WHERE id = ?";
@@ -616,53 +1046,11 @@ public class AdminPageController {
         return kategoriName;
     }
 
-    private String getJenisKegiatanNameById(int idJenisKegiatan) {
-        String jenisName = "Unknown Jenis";
-        String sql = "SELECT nama_jenis FROM jenis_kegiatan WHERE id = ?";
-        try (Connection conn = Connector.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, idJenisKegiatan);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                jenisName = rs.getString("nama_jenis");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return jenisName;
-    }
-
-    // Metode untuk mendapatkan no_ruangan dari ID ruangan (ID-nya string di DB, tapi Ruang entity menggunakan int)
-    private String getRuanganNoById(String idRuangDb) { // Parameter adalah idRuang (String dari DB)
-        String ruanganNo = "Unknown Ruangan";
-        // Di sini kita tidak perlu konversi idRuangDb ke int karena DB mengharapkan String untuk kolom 'id' di tabel 'ruang'.
-        String sql = "SELECT no_ruangan FROM ruang WHERE id = ?";
-        try (Connection conn = Connector.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, idRuangDb); // Set ID sebagai String
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                ruanganNo = rs.getString("no_ruangan");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return ruanganNo;
-    }
-
-
     private void showAlert(Alert.AlertType type, String title, String msg) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
-
-        alert.setHeaderText(title);
+        alert.setHeaderText(null);
         alert.setContentText(msg);
-
-        DialogPane dialogPane = alert.getDialogPane();
-        dialogPane.getStylesheets().add(
-                getClass().getResource("/com/example/projectbd/styles.css").toExternalForm());
-        dialogPane.getStyleClass().add("custom-alert");
-
         alert.showAndWait();
     }
 
@@ -679,7 +1067,7 @@ public class AdminPageController {
         showAlert(Alert.AlertType.INFORMATION, "Navigasi", "Membuka halaman Activities (Admin).");
         updateActiveButton(activitiesButton);
         loadAllActivities();
-        showActivityListContainer();
+        showActivityListContainer(); // Initially show the list, not the details
     }
 
     @FXML
@@ -693,114 +1081,61 @@ public class AdminPageController {
         }
     }
 
-    // --- METHODS UNTUK MANAJEMEN ACTIVITIES ---
-
-    public void loadAllActivities() {
-        yourActivitiesPane.getChildren().clear();
-        String sql = "SELECT kc.id, kc.nama_kegiatan, kc.deskripsi, kc.tanggal_kegiatan, " +
-                "r.no_ruangan, jk.nama_jenis, c.nama_club, kc.id_ruang " + // Include kc.id_ruang
-                "FROM kegiatan_club kc " +
-                "JOIN club c ON kc.id_club = c.id_club " +
-                "LEFT JOIN jenis_kegiatan jk ON kc.id_jenis = jk.id " +
-                "LEFT JOIN ruang r ON kc.id_ruang = r.id " +
-                "ORDER BY kc.tanggal_kegiatan DESC";
-
-        try (Connection conn = Connector.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
-
-            if (!rs.isBeforeFirst()) {
-                yourActivitiesPane.getChildren().add(new Label("Belum ada kegiatan terdaftar."));
-            } else {
-                while (rs.next()) {
-                    int idActivity = rs.getInt("id");
-                    String namaActivity = rs.getString("nama_kegiatan");
-                    String deskripsiActivity = rs.getString("deskripsi");
-                    LocalDate tanggalMulai = rs.getDate("tanggal_kegiatan").toLocalDate();
-
-                    String idRuangDb = rs.getString("id_ruang"); // Ambil ID ruangan sebagai STRING dari tabel kegiatan_club
-                    String ruanganNo = getRuanganNoById(idRuangDb); // Dapatkan no_ruangan (string) dari ID
-
-                    String jenisKegiatan = rs.getString("nama_jenis");
-                    String namaClubPenyelenggara = rs.getString("nama_club");
-
-                    VBox activityCard = new VBox(10);
-                    activityCard.setPrefWidth(Double.MAX_VALUE);
-                    activityCard.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 2);");
-
-                    Label nameLabel = new Label(namaActivity);
-                    nameLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
-                    Label clubLabel = new Label("Penyelenggara: " + namaClubPenyelenggara);
-                    clubLabel.setStyle("-fx-text-fill: #555;");
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-                    String tanggalText = "Tanggal: " + tanggalMulai.format(formatter);
-                    Label dateLabel = new Label(tanggalText);
-                    dateLabel.setStyle("-fx-text-fill: #555;");
-                    Label roomLabel = new Label("Ruangan: " + (ruanganNo != null ? ruanganNo : "-")); // Tampilkan no_ruangan
-                    roomLabel.setStyle("-fx-text-fill: #555;");
-                    Label typeLabel = new Label("Jenis: " + (jenisKegiatan != null ? jenisKegiatan : "-"));
-                    typeLabel.setStyle("-fx-text-fill: #555;");
-                    Label descriptionLabel = new Label(deskripsiActivity);
-                    descriptionLabel.setWrapText(true);
-                    descriptionLabel.setStyle("-fx-text-fill: #333;");
-
-
-                    HBox buttonContainer = new HBox(10);
-                    buttonContainer.setAlignment(Pos.BOTTOM_RIGHT);
-                    buttonContainer.setPadding(new Insets(10, 0, 0, 0));
-
-                    Button editButton = new Button("Edit");
-                    editButton.setStyle("-fx-background-color: #ffc107; -fx-text-fill: white; -fx-background-radius: 5;");
-                    editButton.setOnAction(event -> {
-                        showAlert(Alert.AlertType.INFORMATION, "Edit Kegiatan", "Fitur edit untuk kegiatan '" + namaActivity + "' belum diimplementasikan.");
-                    });
-
-                    Button deleteButton = new Button("Delete");
-                    deleteButton.setStyle("-fx-background-color: #dc3545; -fx-text-fill: white; -fx-background-radius: 5;");
-                    deleteButton.setOnAction(event -> handleDeleteActivity(idActivity, namaActivity));
-
-                    buttonContainer.getChildren().addAll(editButton, deleteButton);
-
-                    activityCard.getChildren().addAll(nameLabel, clubLabel, dateLabel, roomLabel, typeLabel, descriptionLabel, buttonContainer);
-                    yourActivitiesPane.getChildren().add(activityCard);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            Label errorLabel = new Label("Gagal memuat data kegiatan. Periksa skema DB dan nama kolom.");
-            yourActivitiesPane.getChildren().add(errorLabel);
-        }
-    }
-
 
     @FXML
     private void handleAddActivity() {
         String namaActivity = addActivityNameField.getText();
         String deskripsi = addActivityDescriptionField.getText();
-        LocalDate tanggalMulai = addActivityStartDatePicker.getValue();
+        LocalDate tanggalKegiatan = addActivityStartDatePicker.getValue(); // Ini akan jadi tanggal mulai
+
+        // Ambil nilai jam dan menit dari spinner
+        Integer startHour = addActivityStartHourSpinner.getValue();
+        Integer startMinute = addActivityStartMinuteSpinner.getValue();
+        Integer endHour = addActivityEndHourSpinner.getValue();
+        Integer endMinute = addActivityEndMinuteSpinner.getValue();
+
+        // Validasi null untuk spinner
+        if (startHour == null || startMinute == null || endHour == null || endMinute == null) {
+            showAlert(Alert.AlertType.ERROR, "Input Error", "Jam Mulai dan Jam Selesai harus diisi.");
+            return;
+        }
+
+        // Buat objek LocalTime
+        LocalTime jamMulai = LocalTime.of(startHour, startMinute);
+        LocalTime jamSelesai = LocalTime.of(endHour, endMinute);
+
         Ruang selectedRuangan = addActivityRoomComboBox.getSelectionModel().getSelectedItem();
         JenisKegiatan selectedJenisKegiatan = addActivityTypeComboBox.getSelectionModel().getSelectedItem();
         Club selectedClub = addActivityClubComboBox.getSelectionModel().getSelectedItem();
 
-        if (namaActivity.isEmpty() || deskripsi.isEmpty() || tanggalMulai == null || selectedRuangan == null || selectedJenisKegiatan == null || selectedClub == null) {
-            showAlert(Alert.AlertType.ERROR, "Input Error", "Semua kolom (Nama Kegiatan, Deskripsi, Tanggal Mulai, Ruangan, Jenis Kegiatan, Club Penyelenggara) harus diisi untuk menambahkan kegiatan.");
+        if (namaActivity.isEmpty() || deskripsi.isEmpty() || tanggalKegiatan == null || selectedRuangan == null || selectedJenisKegiatan == null || selectedClub == null) {
+            showAlert(Alert.AlertType.ERROR, "Input Error", "Semua kolom (Nama Kegiatan, Deskripsi, Tanggal Kegiatan, Jam Mulai, Jam Selesai, Ruangan, Jenis Kegiatan, Club Penyelenggara) harus diisi untuk menambahkan kegiatan.");
             return;
         }
 
-        int idRuangInt = selectedRuangan.getIdRuang(); // Get idRuang as int from Ruang entity
-        String idRuangString = String.valueOf(idRuangInt); // Convert int to String for DB insertion
+        // Validasi waktu (misal, jam selesai tidak boleh sebelum jam mulai pada tanggal yang sama)
+        if (jamSelesai.isBefore(jamMulai)) {
+            showAlert(Alert.AlertType.ERROR, "Input Error", "Jam Selesai tidak boleh sebelum Jam Mulai.");
+            return;
+        }
 
-        String sql = "INSERT INTO kegiatan_club (nama_kegiatan, deskripsi, tanggal_kegiatan, id_ruang, id_jenis, id_club) VALUES (?, ?, ?, ?, ?, ?)";
+        // Perbaikan: ID Ruangan sekarang adalah INTEGER
+        int idRuang = selectedRuangan.getIdRuang(); // Mengambil ID ruangan sebagai INTEGER dari objek Ruang yang dipilih
+
+        // Perhatikan perubahan pada SQL INSERT statement dan tipe data yang di-set
+        String sql = "INSERT INTO kegiatan_club (nama_kegiatan, deskripsi, tanggal_kegiatan, jam_mulai, jam_selesai, id_ruang, id_jenis, id_club) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = Connector.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, namaActivity);
             pstmt.setString(2, deskripsi);
-            pstmt.setDate(3, java.sql.Date.valueOf(tanggalMulai));
-            pstmt.setString(4, idRuangString); // Set id_ruang as String
-            pstmt.setInt(5, selectedJenisKegiatan.getIdJenisKegiatan());
-            pstmt.setInt(6, selectedClub.getIdClub());
+            pstmt.setDate(3, java.sql.Date.valueOf(tanggalKegiatan)); // Tanggal
+            pstmt.setTime(4, java.sql.Time.valueOf(jamMulai));       // Jam Mulai
+            pstmt.setTime(5, java.sql.Time.valueOf(jamSelesai));     // Jam Selesai
+            pstmt.setInt(6, idRuang); // Gunakan idRuang (integer) yang sudah diambil
+            pstmt.setInt(7, selectedJenisKegiatan.getIdJenisKegiatan()); // Asumsi JenisKegiatan memiliki getId() yang mengembalikan int
+            pstmt.setInt(8, selectedClub.getIdClub()); // Asumsi Club memiliki getIdClub() yang mengembalikan int
 
-            int rowsAffected = pstmt.executeUpdate();
+            int rowsAffected = pstmt.executeUpdate(); // Ambil jumlah baris yang terpengaruh
 
             if (rowsAffected > 0) {
                 showAlert(Alert.AlertType.INFORMATION, "Sukses", "Kegiatan '" + namaActivity + "' berhasil ditambahkan!");
@@ -808,7 +1143,13 @@ public class AdminPageController {
                 addActivityNameField.clear();
                 addActivityDescriptionField.clear();
                 addActivityStartDatePicker.setValue(null);
-                addActivityRoomComboBox.getSelectionModel().clearSelection(); // Clear ComboBox selection
+                // Bersihkan spinner
+                addActivityStartHourSpinner.getValueFactory().setValue(0);
+                addActivityStartMinuteSpinner.getValueFactory().setValue(0);
+                addActivityEndHourSpinner.getValueFactory().setValue(0);
+                addActivityEndMinuteSpinner.getValueFactory().setValue(0);
+
+                addActivityRoomComboBox.getSelectionModel().clearSelection();
                 addActivityTypeComboBox.getSelectionModel().clearSelection();
                 addActivityClubComboBox.getSelectionModel().clearSelection();
                 loadAllActivities();
@@ -818,33 +1159,6 @@ public class AdminPageController {
         } catch (SQLException e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Database Error", "Terjadi kesalahan database saat menambahkan kegiatan: " + e.getMessage());
-        }
-    }
-
-    private void handleDeleteActivity(int idActivity, String namaActivity) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Konfirmasi Penghapusan");
-        alert.setHeaderText("Hapus Kegiatan Ini?");
-        alert.setContentText("Anda yakin ingin menghapus kegiatan '" + namaActivity + "'? Tindakan ini tidak dapat dibatalkan.");
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            String sql = "DELETE FROM kegiatan_club WHERE id = ?";
-            try (Connection conn = Connector.getConnection();
-                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, idActivity);
-
-                int rowsAffected = pstmt.executeUpdate();
-                if (rowsAffected > 0) {
-                    showAlert(Alert.AlertType.INFORMATION, "Sukses", "Kegiatan '" + namaActivity + "' berhasil dihapus.");
-                    loadAllActivities();
-                } else {
-                    showAlert(Alert.AlertType.WARNING, "Gagal", "Kegiatan gagal dihapus.");
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-                showAlert(Alert.AlertType.ERROR, "Database Error", "Terjadi kesalahan database saat menghapus kegiatan: " + e.getMessage());
-            }
         }
     }
 }

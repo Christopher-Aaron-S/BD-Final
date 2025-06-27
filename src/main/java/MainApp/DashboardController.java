@@ -12,6 +12,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -91,12 +93,57 @@ public class DashboardController {
         }
     }
 
-    private void loadUserActivities(String nrp) {
+    public void loadUserActivities(String nrp) {
         enrolledActivitiesPane.getChildren().clear();
-        // TODO: Ganti dengan logika pengecekan aktivitas yang sebenarnya
-        if (true) {
-            enrolledActivitiesPane.getChildren().add(createJoinButton("Join Activity", "activities"));
+        String sql = "SELECT kc.nama_kegiatan, kc.tanggal_kegiatan, c.nama_club " +
+                "FROM kegiatan_club kc " +
+                "JOIN club c ON kc.id_club = c.id_club " +
+                "JOIN keanggotaan k ON c.id_club = k.id_club " +
+                "WHERE k.id_mahasiswa = ? AND k.status = 'aktif' " +
+                "ORDER BY kc.tanggal_kegiatan DESC";
+
+        try (Connection conn = Connector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, nrp);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (!rs.isBeforeFirst()) {
+                enrolledActivitiesPane.getChildren().add(createJoinButton("Join Activity", "activities"));
+            } else {
+                while (rs.next()) {
+                    String namaKegiatan = rs.getString("nama_kegiatan");
+                    LocalDate tanggal = rs.getDate("tanggal_kegiatan").toLocalDate();
+                    String namaClub = rs.getString("nama_club");
+                    enrolledActivitiesPane.getChildren().add(createActivityCard(namaKegiatan, tanggal, namaClub));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Label errorLabel = new Label("Failed to load activity data.");
+            enrolledActivitiesPane.getChildren().add(errorLabel);
         }
+    }
+
+    private VBox createActivityCard(String namaKegiatan, LocalDate tanggal, String namaClub) {
+        VBox card = new VBox(5);
+        card.getStyleClass().add("activity-grid-card");
+        card.setAlignment(Pos.CENTER_LEFT);
+        card.setPadding(new Insets(10));
+
+        Label titleLabel = new Label(namaKegiatan);
+        titleLabel.getStyleClass().add("activity-card-title");
+        titleLabel.setWrapText(true);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy");
+        Label dateLabel = new Label("Tanggal: " + tanggal.format(formatter));
+        dateLabel.getStyleClass().add("activity-card-details");
+
+        Label clubLabel = new Label("Dari: " + namaClub);
+        clubLabel.getStyleClass().add("activity-card-details");
+
+        card.getChildren().addAll(titleLabel, dateLabel, clubLabel);
+        return card;
     }
 
     private VBox createClubCard(String clubName) {

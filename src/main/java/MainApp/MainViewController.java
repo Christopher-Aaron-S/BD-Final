@@ -30,6 +30,7 @@ public class MainViewController {
     public void refreshDashboardData() {
         if (dashboardController != null && currentUser != null) {
             dashboardController.loadUserClubs(currentUser.getNrp());
+            dashboardController.loadUserActivities(currentUser.getNrp()); // Baris ini sudah benar
         }
     }
 
@@ -110,9 +111,9 @@ public class MainViewController {
                 ClubsController controller = loader.getController();
                 controller.setMainController(this);
             } else if (fxmlPath.contains("Settings.fxml")) {
-
+                // Tidak ada tindakan khusus yang diperlukan saat ini
             } else if (fxmlPath.contains("ActivitiesView.fxml")) {
-                ActivitiesController controller = loader.getController();
+                // Tidak ada tindakan khusus yang diperlukan saat ini
             }
 
             contentArea.getChildren().setAll(root);
