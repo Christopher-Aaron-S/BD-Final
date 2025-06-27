@@ -3,6 +3,8 @@ package MainApp;
 import DBConnector.Connector;
 import Entity.Mahasiswa;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -53,11 +55,18 @@ public class LoginController {
                 String nama = rs.getString("nama");
                 String email = rs.getString("email");
                 int idProgram = rs.getInt("id_program");
+                String role = rs.getString("role"); // ambil role dari database
 
                 Mahasiswa loggedInUser = new Mahasiswa(user, nama, email, idProgram);
                 HelloApplication.setLoggedInUser(loggedInUser);
-                HelloApplication.showMainView();
-            } else {
+
+                if ("admin".equalsIgnoreCase(role)) {
+                    HelloApplication.showAdminPage(); // arahkan ke AdminPage
+                } else {
+                    HelloApplication.showMainView(); // arahkan ke halaman user biasa
+                }
+            }
+            else {
                 showError("Invalid NRP or password.");
             }
         } catch (SQLException e) {

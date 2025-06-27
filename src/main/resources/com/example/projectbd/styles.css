@@ -32,7 +32,7 @@
     -fx-text-fill: #8e44ad;
 }
 
-.sidebar-button:focused {
+.sidebar-button:focused, .sidebar-button.active {
     -fx-background-color: #9b59b6;
     -fx-text-fill: white;
 }
@@ -85,4 +85,112 @@
 
 .join-card .text {
     -fx-fill: white;
+}
+
+
+.text-field-error {
+    -fx-border-color: #F44336; /* Warna merah untuk border */
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 8px;
+}
+
+.label-error {
+    -fx-text-fill: #F44336; /* Warna merah untuk teks error */
+    -fx-font-size: 11px;   /* Ukuran font kecil */
+}
+
+
+
+/* Tambahkan di akhir file styles.css */
+
+/* Hapus atau ganti style .club-card dan .carousel-button yang lama dengan ini */
+
+.club-carousel-card {
+    -fx-background-color: #9b59b6; /* Warna ungu dari style Anda */
+    -fx-background-radius: 40px;
+    -fx-border-radius: 40px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 20, 0, 0, 5);
+}
+
+.club-carousel-image-placeholder {
+    -fx-background-color: white;
+    -fx-background-radius: 25px;
+    -fx-border-radius: 25px;
+}
+
+.club-carousel-title {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.club-carousel-join-button {
+    -fx-background-color: white;
+    -fx-text-fill: #9b59b6;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 50px; /* Pill shape */
+    -fx-padding: 10px 60px;
+    -fx-cursor: hand;
+}
+
+.club-carousel-join-button:hover {
+    -fx-background-color: #f0eaf6;
+}
+
+.carousel-nav-button {
+    -fx-background-color: transparent;
+    -fx-font-size: 36px;
+    -fx-font-weight: lighter;
+    -fx-text-fill: #b0b0b0;
+    -fx-cursor: hand;
+}
+
+.carousel-nav-button:hover {
+    -fx-text-fill: #333333;
+}
+
+/* ------ POP UP CLUB CARD --------*/
+
+.popup-card {
+    -fx-background-color: #9b59b6;
+    -fx-padding: 30px;
+    -fx-background-radius: 40px;
+    -fx-border-radius: 40px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 20, 0, 0, 5);
+}
+
+.popup-title {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.popup-subtitle {
+    -fx-font-size: 16px;
+    -fx-text-fill: #e0e0e0;
+    -fx-font-weight: 500;
+}
+
+.popup-description {
+    -fx-fill: white;
+    -fx-font-size: 14px;
+}
+
+.popup-button-cancel, .popup-button-join {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 15px;
+    -fx-padding: 10px 30px;
+    -fx-cursor: hand;
+}
+
+.popup-button-cancel:hover {
+    -fx-background-color: #ff5757; /* Warna merah saat hover */
+}
+
+.popup-button-join:hover {
+    -fx-background-color: #7ed957; /* Warna hijau saat hover */
 }

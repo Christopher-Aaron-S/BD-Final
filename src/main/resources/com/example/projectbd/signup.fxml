@@ -17,47 +17,59 @@
     <children>
         <VBox alignment="CENTER" prefHeight="600.0" prefWidth="450.0" styleClass="left-panel" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@WhatsApp Image 2025-06-18 at 19.19.43.png" />
-                    </image>
-                </ImageView>
                 <Label styleClass="h1-white" text="CREATE" />
                 <Label styleClass="h1-zad" text="ACCOUNT" />
             </children>
         </VBox>
         <VBox alignment="CENTER" layoutX="450.0" prefHeight="600.0" prefWidth="450.0" styleClass="right-panel" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <VBox alignment="CENTER_LEFT" maxWidth="350.0" prefWidth="350.0" spacing="10.0">
-                    <children>
-                        <Label styleClass="h1" text="Sign Up" />
-                        <Label styleClass="p" text="Join our student community!" />
-                        <Label text="Full Name" />
-                        <TextField fx:id="fullNameField" promptText="John Doe" styleClass="text-field" />
-                        <Label text="Email" />
-                        <TextField fx:id="emailField" promptText="john.doe@john.petra.ac.id" styleClass="text-field" />
-                        <Label text="NRP" />
-                        <TextField fx:id="nrpField" promptText="c14210001" styleClass="text-field" />
-                        <Label text="Password" />
-                        <PasswordField fx:id="passwordField" promptText="••••••••••" styleClass="text-field" />
-                        <Label text="Program" />
-                        <ComboBox fx:id="programComboBox" prefWidth="350.0" promptText="Select Program" />
-                        <Button onAction="#handleSignup" prefHeight="40.0" prefWidth="350.0" styleClass="login-button" text="Sign Up" />
-                        <HBox alignment="CENTER">
-                            <children>
-                                <Label styleClass="p" text="Already have an account? " />
-                                <Hyperlink onAction="#goToLogin" text="Login" />
-                            </children>
-                            <VBox.margin>
-                                <Insets top="15.0" />
-                            </VBox.margin>
-                        </HBox>
-                        <HBox fx:id="errorBox" alignment="CENTER" managed="false" styleClass="error-box" visible="false">
-                            <children>
-                                <Label fx:id="errorMessageLabel" text="Error Message" textFill="WHITE" />
-                            </children>
-                        </HBox>
-                    </children>
+                <VBox alignment="CENTER_LEFT" maxWidth="350.0" prefWidth="350.0" spacing="5.0"> <children>
+                    <Label styleClass="h1" text="Sign Up" />
+                    <Label styleClass="p" text="Join our student community!">
+                        <VBox.margin>
+                            <Insets bottom="10.0" />
+                        </VBox.margin>
+                    </Label>
+                    <Label text="Full Name" />
+                    <TextField fx:id="fullNameField" promptText="John Doe" styleClass="text-field" />
+                    <Label fx:id="fullNameErrorLabel" styleClass="label-error" managed="false" visible="false"/>
+
+                    <Label text="Email"/>
+                    <TextField fx:id="emailField" promptText="yourname@john.petra.ac.id" styleClass="text-field"/>
+                    <Label fx:id="emailErrorLabel" styleClass="label-error" managed="false" visible="false"/>
+
+                    <Label text="NRP"/>
+                    <TextField fx:id="nrpField" promptText="c14230001" styleClass="text-field"/>
+                    <Label fx:id="nrpErrorLabel" styleClass="label-error" managed="false" visible="false"/>
+
+                    <Label text="Password" />
+                    <PasswordField fx:id="passwordField" promptText="••••••••••" styleClass="text-field" />
+                    <Label fx:id="passwordErrorLabel" styleClass="label-error" managed="false" visible="false"/>
+
+                    <Label text="Program" />
+                    <ComboBox fx:id="programComboBox" prefWidth="350.0" promptText="Select Program" styleClass="text-field"/>
+                    <Label fx:id="programErrorLabel" styleClass="label-error" managed="false" visible="false"/>
+
+                    <Button onAction="#handleSignup" prefHeight="40.0" prefWidth="350.0" styleClass="login-button" text="Sign Up">
+                        <VBox.margin>
+                            <Insets top="10.0" />
+                        </VBox.margin>
+                    </Button>
+                    <HBox alignment="CENTER">
+                        <children>
+                            <Label styleClass="p" text="Already have an account? " />
+                            <Hyperlink onAction="#goToLogin" text="Login" />
+                        </children>
+                        <VBox.margin>
+                            <Insets top="15.0" />
+                        </VBox.margin>
+                    </HBox>
+                    <HBox fx:id="errorBox" alignment="CENTER" managed="false" styleClass="error-box" visible="false">
+                        <children>
+                            <Label fx:id="errorMessageLabel" text="Error Message" textFill="WHITE" />
+                        </children>
+                    </HBox>
+                </children>
                 </VBox>
             </children>
         </VBox>

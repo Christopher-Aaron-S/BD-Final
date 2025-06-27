@@ -1,20 +1,20 @@
 package Entity;
 
 public class JenisKegiatan {
-    private String idKegiatan;
+    private int idJenisKegiatan;
     private String namaJenis;
 
-    public JenisKegiatan(String idKegiatan, String namaJenis) {
-        this.idKegiatan = idKegiatan;
+    public JenisKegiatan(int idJenisKegiatan, String namaJenis) {
+        this.idJenisKegiatan = idJenisKegiatan;
         this.namaJenis = namaJenis;
     }
 
-    public String getIdKegiatan() {
-        return idKegiatan;
+    public int getIdJenisKegiatan() {
+        return idJenisKegiatan;
     }
 
-    public void setIdKegiatan(String idKegiatan) {
-        this.idKegiatan = idKegiatan;
+    public void setIdJenisKegiatan(int idKegiatan) {
+        this.idJenisKegiatan = idKegiatan;
     }
 
     public String getNamaJenis() {
@@ -24,4 +24,9 @@ public class JenisKegiatan {
     public void setNamaJenis(String namaJenis) {
         this.namaJenis = namaJenis;
     }
+    @Override
+    public String toString() {
+        return namaJenis;
+    }
+
 }

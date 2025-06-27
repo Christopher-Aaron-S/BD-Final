@@ -11,8 +11,9 @@ import java.io.IOException;
 public class HelloApplication extends Application {
 
     public static Stage currentStage;
-    private static Mahasiswa loggedInUser;
+    private static Mahasiswa loggedInUser; // Untuk menyimpan user yang login
     private static String successMessage = null;
+
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -40,6 +41,7 @@ public class HelloApplication extends Application {
         Scene scene = new Scene(fxmlLoader.load());
         currentStage.setScene(scene);
         currentStage.setTitle("Sign Up");
+        currentStage.show(); // Tambahkan ini agar jendela terlihat
     }
 
     public static void showForgot() throws IOException {
@@ -47,6 +49,7 @@ public class HelloApplication extends Application {
         Scene scene = new Scene(fxmlLoader.load());
         currentStage.setScene(scene);
         currentStage.setTitle("Reset Your Password");
+        currentStage.show(); // Tambahkan ini agar jendela terlihat
     }
 
     public static void showMainView() throws IOException {
@@ -54,11 +57,33 @@ public class HelloApplication extends Application {
         Scene scene = new Scene(fxmlLoader.load());
 
         MainViewController controller = fxmlLoader.getController();
-        controller.setUser(getLoggedInUser());
+        controller.setUser(getLoggedInUser()); // Pastikan user disetel ke MainViewController
 
         currentStage.setScene(scene);
         currentStage.setTitle("Student Club Portal");
+        currentStage.show(); // Tambahkan ini agar jendela terlihat
     }
+
+    public static void showAdminPage() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/com/example/projectbd/AdminPage.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
+
+        // *** PENTING: Dapatkan controller dan set user-nya! ***
+        AdminPageController controller = fxmlLoader.getController();
+        if (getLoggedInUser() != null) {
+            controller.setUser(getLoggedInUser()); // Panggil setUser di AdminPageController
+        } else {
+            System.err.println("Warning: Logged in user is null when showing Admin Page.");
+            // Mungkin Anda ingin kembali ke halaman login jika user null
+            showLogin();
+            return;
+        }
+
+        currentStage.setScene(scene);
+        currentStage.setTitle("Admin Page");
+        currentStage.show();
+    }
+    
 
     public static void setLoggedInUser(Mahasiswa user) {
         loggedInUser = user;

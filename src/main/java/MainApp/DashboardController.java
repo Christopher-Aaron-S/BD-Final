@@ -32,8 +32,8 @@ public class DashboardController {
     public void setUser(Mahasiswa user) {
         if (user != null) {
             String programName = loadProgramName(user.getIdProgram());
-            welcomeLabel.setText(String.format("Welcome Back, %s\n%s %s", user.getNama(), programName, user.getNrp()));
-            loadUserClubs(user.getNrp());
+            welcomeLabel.setText(String.format("Welcome Back, %s\n%s | %s", user.getNama(), programName, user.getNrp()));
+            loadUserClubs(user.getNrp()); // Panggil dengan NRP, tapi query di dalam akan menggunakan ID jika itu benar
             loadUserActivities(user.getNrp());
         }
     }
@@ -54,16 +54,25 @@ public class DashboardController {
         return programName;
     }
 
-    private void loadUserClubs(String nrp) {
+    public void loadUserClubs(String nrp) {
         yourClubsPane.getChildren().clear();
         String sql = "SELECT c.nama_club FROM club c " +
                 "JOIN keanggotaan k ON c.id_club = k.id_club " +
-                "WHERE k.nrp_mahasiswa = ? AND k.status = 'aktif'";
+                "WHERE k.id_mahasiswa = ? AND k.status = 'aktif'"; // <-- PERBAIKAN DI SINI: nrp_mahasiswa diganti id_mahasiswa
 
         try (Connection conn = Connector.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, nrp);
+            // Asumsi nrp yang masuk ke metode ini sebenarnya adalah id_mahasiswa yang bertipe string/varchar
+            // Jika nrp yang Anda passing adalah int/integer di database, maka Anda perlu mengubah tipe parameter nrp di sini menjadi int
+            // Atau mengkonversi string nrp ke int jika kolom id_mahasiswa di database adalah int
+            pstmt.setString(1, nrp); // Ini akan cocok jika id_mahasiswa di DB adalah VARCHAR/TEXT
+
+            // Jika k.id_mahasiswa di DB Anda adalah INTEGER, maka Anda harus:
+            // 1. Mengubah parameter metode menjadi `int idMahasiswa`
+            // 2. Menggunakan `pstmt.setInt(1, idMahasiswa);`
+            // 3. Memastikan `user.getNrp()` mengembalikan `int` atau mengkonversinya ke `int` sebelum memanggil `loadUserClubs`
+
             ResultSet rs = pstmt.executeQuery();
 
             if (!rs.isBeforeFirst()) {
@@ -76,7 +85,7 @@ public class DashboardController {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            Label errorLabel = new Label("Failed to load club data. Check DB schema.");
+            Label errorLabel = new Label("Failed to load club data. Check DB schema and column names.");
             yourClubsPane.getChildren().add(errorLabel);
         }
     }

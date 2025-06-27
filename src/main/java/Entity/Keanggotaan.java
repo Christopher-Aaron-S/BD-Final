@@ -1,67 +1,40 @@
 package Entity;
 
+import java.sql.Date; // Hati-hati dengan java.sql.Date, lebih baik java.time.LocalDate
+
 public class Keanggotaan {
-    private String id;
-    private String peran;
-    private int tanggalBergabung;
+    private int id;
+    // Jika Anda menyimpan tanggal sebagai int YYYYMMDD, properti ini harus int atau String
+    // private int tanggalBergabung;
+    private java.time.LocalDate tanggalBergabung; // Lebih baik menggunakan LocalDate
     private String status;
-    private Mahasiswa mahasiswa;
-    private Club club;
+    private Mahasiswa mahasiswa; // Objek Mahasiswa
+    private Club club; // Objek Club
+    // private String peran; // HAPUS INI JIKA KOLOM 'peran' SUDAH DIHAPUS DARI DB
 
-    public Keanggotaan(String id, String peran, int tanggalBergabung, String status, Mahasiswa mahasiswa, Club club) {
+    // Konstruktor baru yang sesuai dengan kebutuhan Anda
+    public Keanggotaan(int id, java.time.LocalDate tanggalBergabung, String status, Mahasiswa mahasiswa, Club club) {
         this.id = id;
-        this.peran = peran;
         this.tanggalBergabung = tanggalBergabung;
         this.status = status;
         this.mahasiswa = mahasiswa;
         this.club = club;
+        // this.peran = peran; // HAPUS INI
     }
 
-    public String getId() {
-        return id;
-    }
+    // Getter
+    public int getId() { return id; }
+    public java.time.LocalDate getTanggalBergabung() { return tanggalBergabung; }
+    public String getStatus() { return status; }
+    public Mahasiswa getMahasiswa() { return mahasiswa; }
+    public Club getClub() { return club; }
+    // public String getPeran() { return peran; } // HAPUS INI
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getPeran() {
-        return peran;
-    }
-
-    public void setPeran(String peran) {
-        this.peran = peran;
-    }
-
-    public int getTanggalBergabung() {
-        return tanggalBergabung;
-    }
-
-    public void setTanggalBergabung(int tanggalBergabung) {
-        this.tanggalBergabung = tanggalBergabung;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public Mahasiswa getMahasiswa() {
-        return mahasiswa;
-    }
-
-    public void setMahasiswa(Mahasiswa mahasiswa) {
-        this.mahasiswa = mahasiswa;
-    }
-
-    public Club getClub() {
-        return club;
-    }
-
-    public void setClub(Club club) {
-        this.club = club;
-    }
+    // Setter (jika diperlukan)
+    public void setId(int id) { this.id = id; }
+    public void setTanggalBergabung(java.time.LocalDate tanggalBergabung) { this.tanggalBergabung = tanggalBergabung; }
+    public void setStatus(String status) { this.status = status; }
+    public void setMahasiswa(Mahasiswa mahasiswa) { this.mahasiswa = mahasiswa; }
+    public void setClub(Club club) { this.club = club; }
+    // public void setPeran(String peran) { this.peran = peran; } // HAPUS INI
 }

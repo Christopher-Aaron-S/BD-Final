@@ -1,23 +1,19 @@
 package Entity;
 
 public class Ruang {
-    private String idRuang;
+    private int idRuang;
     private String noRuangan;
-    private int tanggalKegiatan;
-    private Lantai lantai;
 
-    public Ruang(String idRuang, String noRuangan, int tanggalKegiatan, Lantai lantai) {
+    public Ruang(int idRuang, String noRuangan) {
         this.idRuang = idRuang;
         this.noRuangan = noRuangan;
-        this.tanggalKegiatan = tanggalKegiatan;
-        this.lantai = lantai;
     }
 
-    public String getIdRuang() {
+    public int getIdRuang() {
         return idRuang;
     }
 
-    public void setIdRuang(String idRuang) {
+    public void setIdRuang(int idRuang) {
         this.idRuang = idRuang;
     }
 
@@ -28,20 +24,10 @@ public class Ruang {
     public void setNoRuangan(String noRuangan) {
         this.noRuangan = noRuangan;
     }
-
-    public int getTanggalKegiatan() {
-        return tanggalKegiatan;
+    
+    @Override
+    public String toString() {
+        return noRuangan;
     }
 
-    public void setTanggalKegiatan(int tanggalKegiatan) {
-        this.tanggalKegiatan = tanggalKegiatan;
-    }
-
-    public Lantai getLantai() {
-        return lantai;
-    }
-
-    public void setLantai(Lantai lantai) {
-        this.lantai = lantai;
-    }
 }

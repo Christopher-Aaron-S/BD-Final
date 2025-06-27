@@ -17,18 +17,12 @@
     <children>
         <VBox alignment="CENTER" prefHeight="600.0" prefWidth="450.0" styleClass="left-panel" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                            <!--                        IMAGE                           -->
-                        <Image url="@WhatsApp Image 2025-06-18 at 19.19.43.png" />
-                    </image>
-                </ImageView>
                 <Label styleClass="h1-white" text="WELCOME TO">
                     <VBox.margin>
                         <Insets top="10.0" />
                     </VBox.margin>
                 </Label>
-                <Label styleClass="h1-zad" text="ZAD" />
+                <Label styleClass="h1-zad" text="Student Club" />
             </children>
         </VBox>
         <VBox alignment="CENTER" layoutX="450.0" prefHeight="600.0" prefWidth="450.0" styleClass="right-panel" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">

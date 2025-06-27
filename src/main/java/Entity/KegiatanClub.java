@@ -1,67 +1,92 @@
 package Entity;
 
+import java.time.LocalDate;
+
 public class KegiatanClub {
-    private String idKegiatanClub;
-    private String namaKegiatan;
-    private int tanggalKegiatan;
-    private Keanggotaan keanggotaan;
-    private Ruang ruang;
-    private JenisKegiatan jenis;
+    private int idActivity;
+    private String namaActivity;
+    private String deskripsi;
+    private LocalDate tanggalMulai;
+    private LocalDate tanggalSelesai;
+    private String idRuangan; // UBAH KEMBALI KE String
+    private int idJenisKegiatan;
+    private int idClub;
 
-    public KegiatanClub(String idKegiatanClub, String namaKegiatan, int tanggalKegiatan, Keanggotaan keanggotaan, Ruang ruang, JenisKegiatan jenis) {
-        this.idKegiatanClub = idKegiatanClub;
-        this.namaKegiatan = namaKegiatan;
-        this.tanggalKegiatan = tanggalKegiatan;
-        this.keanggotaan = keanggotaan;
-        this.ruang = ruang;
-        this.jenis = jenis;
+    public KegiatanClub(int idActivity, String namaActivity, String deskripsi,
+                    LocalDate tanggalMulai, LocalDate tanggalSelesai,
+                    String idRuangan, int idJenisKegiatan, int idClub) { // UBAH idRuangan parameter
+        this.idActivity = idActivity;
+        this.namaActivity = namaActivity;
+        this.deskripsi = deskripsi;
+        this.tanggalMulai = tanggalMulai;
+        this.tanggalSelesai = tanggalSelesai;
+        this.idRuangan = idRuangan; // Set String
+        this.idJenisKegiatan = idJenisKegiatan;
+        this.idClub = idClub;
     }
 
-    public String getIdKegiatanClub() {
-        return idKegiatanClub;
+    // Getters and Setters
+    public int getIdActivity() {
+        return idActivity;
     }
 
-    public void setIdKegiatanClub(String idKegiatanClub) {
-        this.idKegiatanClub = idKegiatanClub;
+    public void setIdActivity(int idActivity) {
+        this.idActivity = idActivity;
     }
 
-    public String getNamaKegiatan() {
-        return namaKegiatan;
+    public String getNamaActivity() {
+        return namaActivity;
     }
 
-    public void setNamaKegiatan(String namaKegiatan) {
-        this.namaKegiatan = namaKegiatan;
+    public void setNamaActivity(String namaActivity) {
+        this.namaActivity = namaActivity;
     }
 
-    public int getTanggalKegiatan() {
-        return tanggalKegiatan;
+    public String getDeskripsi() {
+        return deskripsi;
     }
 
-    public void setTanggalKegiatan(int tanggalKegiatan) {
-        this.tanggalKegiatan = tanggalKegiatan;
+    public void setDeskripsi(String deskripsi) {
+        this.deskripsi = deskripsi;
     }
 
-    public Keanggotaan getKeanggotaan() {
-        return keanggotaan;
+    public LocalDate getTanggalMulai() {
+        return tanggalMulai;
     }
 
-    public void setKeanggotaan(Keanggotaan keanggotaan) {
-        this.keanggotaan = keanggotaan;
+    public void setTanggalMulai(LocalDate tanggalMulai) {
+        this.tanggalMulai = tanggalMulai;
     }
 
-    public Ruang getRuang() {
-        return ruang;
+    public LocalDate getTanggalSelesai() {
+        return tanggalSelesai;
     }
 
-    public void setRuang(Ruang ruang) {
-        this.ruang = ruang;
+    public void setTanggalSelesai(LocalDate tanggalSelesai) {
+        this.tanggalSelesai = tanggalSelesai;
     }
 
-    public JenisKegiatan getJenis() {
-        return jenis;
+    public String getIdRuangan() { // UBAH KEMBALI KE String
+        return idRuangan;
     }
 
-    public void setJenis(JenisKegiatan jenis) {
-        this.jenis = jenis;
+    public void setIdRuangan(String idRuangan) { // UBAH idRuangan parameter
+        this.idRuangan = idRuangan;
+    }
+
+    public int getIdJenisKegiatan() {
+        return idJenisKegiatan;
+    }
+
+    public void setIdJenisKegiatan(int idJenisKegiatan) {
+        this.idJenisKegiatan = idJenisKegiatan;
+    }
+
+    public int getIdClub() {
+        return idClub;
+    }
+
+    public void setIdClub(int idClub) {
+        this.idClub = idClub;
     }
 }
