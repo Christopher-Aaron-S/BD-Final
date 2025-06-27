@@ -8,6 +8,7 @@ import Entity.Keanggotaan;
 import Entity.KegiatanClub;
 import Entity.JenisKegiatan;
 import Entity.Ruang; // Menggunakan Ruang sesuai permintaan
+import javafx.scene.control.DialogPane;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -653,8 +654,15 @@ public class AdminPageController {
     private void showAlert(Alert.AlertType type, String title, String msg) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
-        alert.setHeaderText(null);
+
+        alert.setHeaderText(title);
         alert.setContentText(msg);
+
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(
+                getClass().getResource("/com/example/projectbd/styles.css").toExternalForm());
+        dialogPane.getStyleClass().add("custom-alert");
+
         alert.showAndWait();
     }
 

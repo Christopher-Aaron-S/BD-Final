@@ -258,3 +258,53 @@
 .club-grid-join-button.joined:hover {
     -fx-background-color: #bdc3c7; /* Tidak berubah warna saat hover */
 }
+
+/* -- Desain Custom untuk Alert Box -- */
+
+.custom-alert {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 15px;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 15px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 20, 0, 0, 5);
+}
+
+/* Header (Bagian atas yang berisi judul) */
+.custom-alert .header-panel {
+    -fx-background-color: #9b59b6; /* Warna ungu header */
+    -fx-background-radius: 15px 15px 0 0;
+}
+
+.custom-alert .header-panel .label {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-padding: 15px;
+}
+
+/* Ikon (seperti 'i' untuk informasi) */
+.custom-alert .header-panel .graphic {
+    -fx-padding: 0 0 0 10px;
+}
+
+/* Konten Pesan */
+.custom-alert .content.label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #333333;
+    -fx-padding: 20px;
+}
+
+/* Tombol (OK, Cancel, dll) */
+.custom-alert .button-bar .button {
+    -fx-background-color: #2ecc71; /* Warna hijau seperti tombol join */
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-padding: 8px 25px;
+}
+
+.custom-alert .button-bar .button:hover {
+    -fx-background-color: #27ae60;
+}

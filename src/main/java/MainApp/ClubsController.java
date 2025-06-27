@@ -14,6 +14,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.scene.control.DialogPane;
 
 import java.net.URL;
 import java.sql.Connection;
@@ -158,8 +159,15 @@ public class ClubsController implements Initializable {
     private void showAlert(Alert.AlertType type, String title, String msg) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
-        alert.setHeaderText(null);
+
+        alert.setHeaderText(title);
         alert.setContentText(msg);
+
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(
+                getClass().getResource("/com/example/projectbd/styles.css").toExternalForm());
+        dialogPane.getStyleClass().add("custom-alert");
+
         alert.showAndWait();
     }
 }
