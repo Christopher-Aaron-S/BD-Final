@@ -61,7 +61,7 @@ public class HelloApplication extends Application {
 
         currentStage.setScene(scene);
         currentStage.setTitle("Student Club Portal");
-        currentStage.show(); // Tambahkan ini agar jendela terlihat
+        currentStage.show();
     }
 
     public static void showAdminPage() throws IOException {

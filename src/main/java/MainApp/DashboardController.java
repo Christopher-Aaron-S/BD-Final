@@ -4,6 +4,7 @@ import DBConnector.Connector;
 import Entity.Mahasiswa;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -100,11 +101,13 @@ public class DashboardController {
 
     private VBox createClubCard(String clubName) {
         VBox card = new VBox(5);
-        card.setPadding(new Insets(15));
-        card.setPrefSize(180, 100);
-        card.setStyle("-fx-background-color: white; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 2);");
+        card.getStyleClass().add("dashboard-club-card");
+        card.setAlignment(Pos.CENTER_LEFT); // Kita ubah alignment agar teks rapi di kiri
+
         Label nameLabel = new Label(clubName);
-        nameLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
+        // Menambahkan style class untuk label nama klub
+        nameLabel.getStyleClass().add("dashboard-club-name");
+
         card.getChildren().add(nameLabel);
         return card;
     }

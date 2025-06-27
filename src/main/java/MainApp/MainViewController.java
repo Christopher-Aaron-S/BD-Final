@@ -110,7 +110,9 @@ public class MainViewController {
                 ClubsController controller = loader.getController();
                 controller.setMainController(this);
             } else if (fxmlPath.contains("Settings.fxml")) {
-                // Tidak ada setup khusus untuk SettingsController saat ini
+
+            } else if (fxmlPath.contains("ActivitiesView.fxml")) {
+                ActivitiesController controller = loader.getController();
             }
 
             contentArea.getChildren().setAll(root);

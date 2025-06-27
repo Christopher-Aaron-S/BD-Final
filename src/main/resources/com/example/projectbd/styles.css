@@ -308,3 +308,45 @@
 .custom-alert .button-bar .button:hover {
     -fx-background-color: #27ae60;
 }
+
+/* -- Style untuk Kartu Klub di Dashboard -- */
+
+.dashboard-club-card {
+    -fx-background-color: white;
+    -fx-background-radius: 8px;
+    -fx-padding: 15px;
+    -fx-pref-width: 180px;
+    -fx-pref-height: 100px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 2);
+}
+
+.dashboard-club-name {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333; /* Warna teks gelap agar terlihat */
+}
+
+/* -- Style untuk Kartu Kegiatan di Halaman Activities -- */
+
+.activity-grid-card {
+    -fx-background-color: white; /* Kartu berwarna putih */
+    -fx-background-radius: 15px;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 15px;
+    -fx-padding: 20px;
+    -fx-pref-width: 240px;  /* Sedikit lebih lebar */
+    -fx-pref-height: 180px; /* Sedikit lebih pendek */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 10, 0, 0, 3);
+}
+
+.activity-card-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+}
+
+.activity-card-details {
+    -fx-font-size: 13px;
+    -fx-text-fill: #555555;
+}
