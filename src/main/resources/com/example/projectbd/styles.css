@@ -350,3 +350,17 @@
     -fx-font-size: 13px;
     -fx-text-fill: #555555;
 }
+
+.details-button-purple {
+    -fx-background-color: rgba(255, 255, 255, 0.2); /* Warna dasar transparan seperti tombol popup */
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 15px;
+    -fx-padding: 8px 20px;
+    -fx-cursor: hand;
+}
+
+.details-button-purple:hover {
+    -fx-background-color: #9b59b6;
+}

@@ -49,7 +49,7 @@ public class HelloApplication extends Application {
         Scene scene = new Scene(fxmlLoader.load());
         currentStage.setScene(scene);
         currentStage.setTitle("Reset Your Password");
-        currentStage.show(); // Tambahkan ini agar jendela terlihat
+        currentStage.show();
     }
 
     public static void showMainView() throws IOException {
@@ -57,7 +57,7 @@ public class HelloApplication extends Application {
         Scene scene = new Scene(fxmlLoader.load());
 
         MainViewController controller = fxmlLoader.getController();
-        controller.setUser(getLoggedInUser()); // Pastikan user disetel ke MainViewController
+        controller.setUser(getLoggedInUser());
 
         currentStage.setScene(scene);
         currentStage.setTitle("Student Club Portal");

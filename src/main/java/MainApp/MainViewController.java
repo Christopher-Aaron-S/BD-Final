@@ -86,8 +86,7 @@ public class MainViewController {
 
     @FXML
     private void showMyProfile() {
-        System.out.println("Navigasi ke Halaman My Profile (belum diimplementasikan)");
-        // PERBAIKAN: Pastikan tombol yang benar (myProfileButton) diaktifkan
+        loadPage("/com/example/projectbd/MyProfile.fxml");
         updateActiveButton(myProfileButton);
     }
 
@@ -114,6 +113,9 @@ public class MainViewController {
                 // Tidak ada tindakan khusus yang diperlukan saat ini
             } else if (fxmlPath.contains("ActivitiesView.fxml")) {
                 // Tidak ada tindakan khusus yang diperlukan saat ini
+            } else if (fxmlPath.contains("MyProfile.fxml")) {
+                MyProfileController controller = loader.getController();
+                // Anda bisa passing data ke controller di sini jika perlu
             }
 
             contentArea.getChildren().setAll(root);
